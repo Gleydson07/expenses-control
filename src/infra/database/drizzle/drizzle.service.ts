@@ -1,12 +1,14 @@
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres, { Sql } from 'postgres';
 import { ConfigService } from '@nestjs/config';
 import * as schema from '../../../../drizzle/schema.drizzle';
 
+// @ts-ignore
+const postgres = require('postgres');
+
 @Injectable()
 export class DrizzleService implements OnModuleDestroy {
-  private client: Sql;
+  private client: any;
   public db: ReturnType<typeof drizzle>;
 
   constructor(private configService: ConfigService) {
