@@ -88,7 +88,7 @@ export const plannedTransactions = pgTable('planned_transactions', {
   updatedAt: timestamp('updated_at'),
 });
 
-export const referenceMonths = pgTable('reference_month', {
+export const referenceMonths = pgTable('reference_months', {
   id: serial('id').primaryKey(),
   costCenterId: integer('cost_center_id')
     .references(() => costCenters.id)
