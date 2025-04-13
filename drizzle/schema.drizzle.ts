@@ -17,3 +17,11 @@ export const roles = pgTable('roles', {
   createdAt: timestamp('created_at'),
   updatedAt: timestamp('updated_at'),
 });
+
+export const categories = pgTable('categories', {
+  id: serial('id').primaryKey(),
+  title: varchar('title', { length: 128 }),
+  description: varchar('description', { length: 2048 }),
+  createdAt: timestamp('created_at'),
+  updatedAt: timestamp('updated_at'),
+});
