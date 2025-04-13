@@ -29,6 +29,13 @@
       "when": 1744564232342,
       "tag": "0003_create_managements_table",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1744564549401,
+      "tag": "0004_create_transactions_table",
+      "breakpoints": true
     }
   ]
 }

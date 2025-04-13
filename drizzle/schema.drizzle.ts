@@ -3,9 +3,16 @@ import {
   serial,
   varchar,
   boolean,
+  decimal,
   timestamp,
   integer,
+  pgEnum,
 } from 'drizzle-orm/pg-core';
+
+export const transactionTypeEnum = pgEnum('transaction_type', [
+  'INCOME',
+  'EXPENSE',
+]);
 
 export const roles = pgTable('roles', {
   id: serial('id').primaryKey(),
@@ -45,6 +52,22 @@ export const managements = pgTable('managements', {
     .references(() => roles.id)
     .notNull(),
   userId: integer('user_id').notNull(),
+  createdAt: timestamp('created_at'),
+  updatedAt: timestamp('updated_at'),
+});
+
+export const transactions = pgTable('transactions', {
+  id: serial('id').primaryKey(),
+  categoryId: integer('category_id')
+    .references(() => categories.id)
+    .notNull(),
+  title: varchar('title', { length: 128 }),
+  description: varchar('description', { length: 2048 }),
+  type: transactionTypeEnum('type').notNull(),
+  estimatedValue: decimal('estimated_value', {
+    precision: 9,
+    scale: 2,
+  }).default('0'),
   createdAt: timestamp('created_at'),
   updatedAt: timestamp('updated_at'),
 });
