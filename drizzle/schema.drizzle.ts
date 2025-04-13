@@ -14,21 +14,21 @@ export const plannedTransactionTypeEnum = pgEnum('planned_transaction_type', [
   'EXPENSE',
 ]);
 
-export const referenceMonthStatusesEnum = pgEnum('reference_month_status', [
+export const referenceMonthStatusesEnum = pgEnum('reference_months_status', [
   'OPEN',
   'IN_PROGRESS',
   'COMPLETED',
   'CLOSED',
 ]);
 
-// export const transactionStatusEnum = pgEnum('transaction_status', [
-//   'PENDING',
-//   'SCHEDULED',
-//   'PAID',
-//   'PARTIALLY_PAID',
-//   'OVERDUE',
-//   'CANCELLED',
-// ]);
+export const transactionStatusEnum = pgEnum('transaction_status', [
+  'PENDING',
+  'SCHEDULED',
+  'PAID',
+  'PARTIALLY_PAID',
+  'OVERDUE',
+  'CANCELLED',
+]);
 
 export const roles = pgTable('roles', {
   id: serial('id').primaryKey(),
@@ -102,6 +102,9 @@ export const referenceMonths = pgTable('reference_months', {
     precision: 12,
     scale: 2,
   }).default('0'),
+  balance: decimal('balance', { precision: 12, scale: 2 }).generatedAlwaysAs(
+    'incomes_total_value - expenses_total_value',
+  ),
   month: timestamp('month'),
   year: timestamp('year'),
   notes: varchar('notes'),
@@ -109,12 +112,16 @@ export const referenceMonths = pgTable('reference_months', {
   updatedAt: timestamp('updated_at'),
 });
 
-// export const transactions = pgTable('transactions', {
-//   id: serial('id').primaryKey(),
-//   referenceMonthId: integer('reference_month_id').references(() => referenceMonths.id).notNull(),
-//   plannedTransactionId: integer('planned_transaction_id').references(() => transactions.id).notNull(),
-//   status: transactionStatusEnum('status').notNull(),
-//   value: decimal('value', { precision: 9, scale: 2 }).default('0'),
-//   createdAt: timestamp('created_at'),
-//   updatedAt: timestamp('updated_at'),
-// });
+export const transactions = pgTable('transactions', {
+  id: serial('id').primaryKey(),
+  referenceMonthId: integer('reference_month_id')
+    .references(() => referenceMonths.id)
+    .notNull(),
+  plannedTransactionId: integer('planned_transaction_id')
+    .references(() => transactions.id)
+    .notNull(),
+  status: transactionStatusEnum('status').notNull(),
+  value: decimal('value', { precision: 9, scale: 2 }).default('0'),
+  createdAt: timestamp('created_at'),
+  updatedAt: timestamp('updated_at'),
+});
