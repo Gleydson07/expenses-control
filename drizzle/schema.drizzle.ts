@@ -56,7 +56,7 @@ export const managements = pgTable('managements', {
   updatedAt: timestamp('updated_at'),
 });
 
-export const transactions = pgTable('transactions', {
+export const plannedTransactions = pgTable('planned_transactions', {
   id: serial('id').primaryKey(),
   categoryId: integer('category_id')
     .references(() => categories.id)

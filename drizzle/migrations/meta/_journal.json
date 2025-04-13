@@ -36,6 +36,13 @@
       "when": 1744564549401,
       "tag": "0004_create_transactions_table",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1744565213909,
+      "tag": "0005_change_table_name_from_transactions_to_planned_transactions",
+      "breakpoints": true
     }
   ]
 }
