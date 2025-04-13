@@ -15,6 +15,20 @@
       "when": 1744563247575,
       "tag": "0001_create_categories_table",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1744563304287,
+      "tag": "0002_create_cost_centers_table",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1744564232342,
+      "tag": "0003_create_managements_table",
+      "breakpoints": true
     }
   ]
 }
