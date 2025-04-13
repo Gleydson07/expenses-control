@@ -9,10 +9,26 @@ import {
   pgEnum,
 } from 'drizzle-orm/pg-core';
 
-export const transactionTypeEnum = pgEnum('transaction_type', [
+export const plannedTransactionTypeEnum = pgEnum('planned_transaction_type', [
   'INCOME',
   'EXPENSE',
 ]);
+
+export const referenceMonthStatusesEnum = pgEnum('reference_month_status', [
+  'OPEN',
+  'IN_PROGRESS',
+  'COMPLETED',
+  'CLOSED',
+]);
+
+// export const transactionStatusEnum = pgEnum('transaction_status', [
+//   'PENDING',
+//   'SCHEDULED',
+//   'PAID',
+//   'PARTIALLY_PAID',
+//   'OVERDUE',
+//   'CANCELLED',
+// ]);
 
 export const roles = pgTable('roles', {
   id: serial('id').primaryKey(),
@@ -63,7 +79,7 @@ export const plannedTransactions = pgTable('planned_transactions', {
     .notNull(),
   title: varchar('title', { length: 128 }),
   description: varchar('description', { length: 2048 }),
-  type: transactionTypeEnum('type').notNull(),
+  type: plannedTransactionTypeEnum('type').notNull(),
   estimatedValue: decimal('estimated_value', {
     precision: 9,
     scale: 2,
@@ -71,3 +87,34 @@ export const plannedTransactions = pgTable('planned_transactions', {
   createdAt: timestamp('created_at'),
   updatedAt: timestamp('updated_at'),
 });
+
+export const referenceMonths = pgTable('reference_month', {
+  id: serial('id').primaryKey(),
+  costCenterId: integer('cost_center_id')
+    .references(() => costCenters.id)
+    .notNull(),
+  status: referenceMonthStatusesEnum('status').notNull(),
+  expensesTotalValue: decimal('expenses_total_value', {
+    precision: 12,
+    scale: 2,
+  }).default('0'),
+  incomesTotalValue: decimal('incomes_total_value', {
+    precision: 12,
+    scale: 2,
+  }).default('0'),
+  month: timestamp('month'),
+  year: timestamp('year'),
+  notes: varchar('notes'),
+  createdAt: timestamp('created_at'),
+  updatedAt: timestamp('updated_at'),
+});
+
+// export const transactions = pgTable('transactions', {
+//   id: serial('id').primaryKey(),
+//   referenceMonthId: integer('reference_month_id').references(() => referenceMonths.id).notNull(),
+//   plannedTransactionId: integer('planned_transaction_id').references(() => transactions.id).notNull(),
+//   status: transactionStatusEnum('status').notNull(),
+//   value: decimal('value', { precision: 9, scale: 2 }).default('0'),
+//   createdAt: timestamp('created_at'),
+//   updatedAt: timestamp('updated_at'),
+// });
