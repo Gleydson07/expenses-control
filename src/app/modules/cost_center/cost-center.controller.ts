@@ -4,7 +4,7 @@ import { CreateCostCenterUseCase } from './usecases/create-cost-center.usecase';
 import { UserFromToken } from 'src/infra/auth/dto/token-payload.dto';
 import { User } from 'src/infra/auth/decorators/user-extract-auth.decorator';
 
-@Controller('cost-center')
+@Controller()
 export class CostCenterController {
   constructor(
     private readonly createCostCenterUseCase: CreateCostCenterUseCase,
