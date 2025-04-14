@@ -1,11 +1,18 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { eq } from 'drizzle-orm';
 import postgres from 'postgres';
+import 'dotenv/config';
 
 import * as schema from '../../../../../drizzle/schema.drizzle';
 
 async function main() {
-  const connectionString = process.env.DATABASE_URL;
+  const { PG_USER, PG_PASSWORD, PG_HOST, PG_PORT, PG_DATABASE } = process.env;
+
+  if (!PG_USER || !PG_PASSWORD || !PG_HOST || !PG_PORT || !PG_DATABASE) {
+    throw new Error('Variáveis do banco de dados não definidas.');
+  }
+
+  const connectionString = `postgres://${PG_USER}:${PG_PASSWORD}@${PG_HOST}:${PG_PORT}/${PG_DATABASE}`;
 
   if (!connectionString) {
     throw new Error('DATABASE_URL não definida');

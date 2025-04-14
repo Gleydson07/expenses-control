@@ -7,6 +7,7 @@ import * as dotenvExpand from 'dotenv-expand';
 import { APP_GUARD, RouterModule } from '@nestjs/core';
 import { AuthGuard } from './infra/auth/guards/auth.guard';
 import { CostCenterModule } from './app/modules/cost_center/cost-center.module';
+import { ManagementModule } from './app/modules/management/management.module';
 
 const env = dotenv.config();
 dotenvExpand.expand(env);
@@ -23,6 +24,7 @@ export const prefix = 'ms-expenses-control/api/v1';
     DatabaseModule,
     AuthModule,
     CostCenterModule,
+    ManagementModule,
     RouterModule.register([
       {
         path: `${prefix}/cost-centers`,
