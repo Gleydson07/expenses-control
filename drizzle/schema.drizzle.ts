@@ -7,6 +7,7 @@ import {
   timestamp,
   integer,
   pgEnum,
+  primaryKey,
 } from 'drizzle-orm/pg-core';
 
 export const plannedTransactionTypeEnum = pgEnum('planned_transaction_type', [
@@ -32,7 +33,7 @@ export const transactionStatusEnum = pgEnum('transaction_status', [
 
 export const roles = pgTable('roles', {
   id: serial('id').primaryKey(),
-  title: varchar('title', { length: 128 }),
+  title: varchar('title', { length: 128 }).unique(),
   description: varchar('description', { length: 2048 }),
   canCreate: boolean('can_create'),
   canEdit: boolean('can_edit'),
@@ -44,7 +45,7 @@ export const roles = pgTable('roles', {
 
 export const categories = pgTable('categories', {
   id: serial('id').primaryKey(),
-  title: varchar('title', { length: 128 }),
+  title: varchar('title', { length: 128 }).unique(),
   description: varchar('description', { length: 2048 }),
   createdAt: timestamp('created_at'),
   updatedAt: timestamp('updated_at'),
@@ -52,25 +53,36 @@ export const categories = pgTable('categories', {
 
 export const costCenters = pgTable('cost_centers', {
   id: serial('id').primaryKey(),
-  title: varchar('title', { length: 128 }),
+  title: varchar('title', { length: 128 }).unique(),
   description: varchar('description', { length: 2048 }),
   isActive: boolean('is_active').default(true),
   createdAt: timestamp('created_at'),
   updatedAt: timestamp('updated_at'),
 });
 
-export const managements = pgTable('managements', {
-  id: serial('id').primaryKey(),
-  costCenterId: integer('cost_center_id')
-    .references(() => costCenters.id)
-    .notNull(),
-  roleId: integer('role_id')
-    .references(() => roles.id)
-    .notNull(),
-  userId: integer('user_id').notNull(),
-  createdAt: timestamp('created_at'),
-  updatedAt: timestamp('updated_at'),
-});
+export const managements = pgTable(
+  'managements',
+  {
+    costCenterId: integer('cost_center_id')
+      .references(() => costCenters.id)
+      .notNull(),
+    roleId: integer('role_id')
+      .references(() => roles.id)
+      .notNull(),
+    userId: integer('user_id').notNull(),
+    createdAt: timestamp('created_at'),
+    updatedAt: timestamp('updated_at'),
+  },
+  (managements) => [
+    primaryKey({
+      columns: [
+        managements.costCenterId,
+        managements.roleId,
+        managements.userId,
+      ],
+    }),
+  ],
+);
 
 export const plannedTransactions = pgTable('planned_transactions', {
   id: serial('id').primaryKey(),

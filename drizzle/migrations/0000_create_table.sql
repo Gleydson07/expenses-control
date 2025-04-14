@@ -6,7 +6,8 @@ CREATE TABLE "categories" (
 	"title" varchar(128),
 	"description" varchar(2048),
 	"created_at" timestamp,
-	"updated_at" timestamp
+	"updated_at" timestamp,
+	CONSTRAINT "categories_title_unique" UNIQUE("title")
 );
 --> statement-breakpoint
 CREATE TABLE "cost_centers" (
@@ -15,16 +16,17 @@ CREATE TABLE "cost_centers" (
 	"description" varchar(2048),
 	"is_active" boolean DEFAULT true,
 	"created_at" timestamp,
-	"updated_at" timestamp
+	"updated_at" timestamp,
+	CONSTRAINT "cost_centers_title_unique" UNIQUE("title")
 );
 --> statement-breakpoint
 CREATE TABLE "managements" (
-	"id" serial PRIMARY KEY NOT NULL,
 	"cost_center_id" integer NOT NULL,
 	"role_id" integer NOT NULL,
 	"user_id" integer NOT NULL,
 	"created_at" timestamp,
-	"updated_at" timestamp
+	"updated_at" timestamp,
+	CONSTRAINT "managements_cost_center_id_role_id_user_id_pk" PRIMARY KEY("cost_center_id","role_id","user_id")
 );
 --> statement-breakpoint
 CREATE TABLE "planned_transactions" (
@@ -61,7 +63,8 @@ CREATE TABLE "roles" (
 	"can_read" boolean,
 	"can_remove" boolean,
 	"created_at" timestamp,
-	"updated_at" timestamp
+	"updated_at" timestamp,
+	CONSTRAINT "roles_title_unique" UNIQUE("title")
 );
 --> statement-breakpoint
 CREATE TABLE "transactions" (
