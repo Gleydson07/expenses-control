@@ -6,3 +6,13 @@ export class ResponseCostCenterDto {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export class ResponseCostCenterWithManagementsDto extends ResponseCostCenterDto {
+  managements: {
+    id: number;
+    userId: number;
+    roleId: number;
+    createdAt: Date;
+    updatedAt: Date;
+  }[];
+}

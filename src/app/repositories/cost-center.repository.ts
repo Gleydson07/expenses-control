@@ -12,16 +12,12 @@ export abstract class CostCenterRepository {
 
   abstract findAll(userId: number): Promise<ResponseCostCenterDto[]>;
 
-  abstract findOne(
-    userId: number,
-    addressId: number,
-  ): Promise<ResponseCostCenterDto>;
+  abstract findOne(centerCostId: number): Promise<ResponseCostCenterDto>;
 
   abstract update(
-    userId: number,
-    addressId: number,
+    centerCostId: number,
     updateCostCenter: UpdateCostCenterDto,
   ): Promise<ResponseCostCenterDto>;
 
-  abstract remove(userId: number, addressId: number): Promise<void>;
+  abstract remove(centerCostId: number): Promise<void>;
 }

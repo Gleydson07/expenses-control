@@ -8,5 +8,7 @@ export abstract class ManagementRepository {
     createManagement: CreateManagementDto,
   ): Promise<ResponseManagementDto>;
 
-  abstract findAll(userId: number): Promise<ResponseManagementDto[]>;
+  abstract findByCostCenterIds(
+    costCenterIds: number[],
+  ): Promise<ResponseManagementDto[]>;
 }

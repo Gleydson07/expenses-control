@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DrizzleService } from '../drizzle.service';
 import { managements } from 'drizzle/schema.drizzle';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { ManagementRepository } from 'src/app/repositories/management.repository';
 import { CreateManagementDto } from 'src/app/modules/management/dto/create-cost-center.dto';
 import { ResponseManagementDto } from 'src/app/modules/management/dto/response-cost-center.dto';
@@ -23,10 +23,18 @@ export class DrizzleManagementRepository implements ManagementRepository {
     return management[0];
   }
 
-  async findAll(userId: number): Promise<ResponseManagementDto[]> {
+  async findByCostCenterIds(
+    costCenterIds: number[],
+  ): Promise<ResponseManagementDto[]> {
     return await this.drizzleService.db
-      .select()
+      .select({
+        costCenterId: managements.costCenterId,
+        userId: managements.userId,
+        roleId: managements.roleId,
+        createdAt: managements.createdAt,
+        updatedAt: managements.updatedAt,
+      })
       .from(managements)
-      .where(and(eq(managements.userId, userId)));
+      .where(inArray(managements.costCenterId, costCenterIds));
   }
 }

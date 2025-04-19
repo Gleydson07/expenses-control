@@ -19,7 +19,13 @@ export class DrizzleCostCenterRepository implements CostCenterRepository {
 
     const costCenter = await this.drizzleService.db
       .insert(costCenters)
-      .values({ title, description: description, userId })
+      .values({
+        title,
+        description: description,
+        userId,
+        created_at: new Date(),
+        updated_at: new Date(),
+      })
       .returning();
 
     return costCenter[0];
@@ -53,19 +59,44 @@ export class DrizzleCostCenterRepository implements CostCenterRepository {
     return result;
   }
 
-  findOne(userId: number, addressId: number): Promise<ResponseCostCenterDto> {
-    throw new Error('Method not implemented.');
+  async findOne(centerCostId: number): Promise<ResponseCostCenterDto> {
+    return await this.drizzleService.db
+      .select({
+        id: costCenters.id,
+        title: costCenters.title,
+        description: costCenters.description,
+        isActive: costCenters.isActive,
+        createdAt: costCenters.createdAt,
+        updatedAt: costCenters.updatedAt,
+      })
+      .from(costCenters)
+      .where(eq(costCenters.id, centerCostId))
+      .then((res) => res[0]);
   }
 
-  update(
-    userId: number,
-    addressId: number,
+  async update(
+    centerCostId: number,
     updateCostCenter: UpdateCostCenterDto,
   ): Promise<ResponseCostCenterDto> {
-    throw new Error('Method not implemented.');
+    const { title, description } = updateCostCenter;
+
+    return this.drizzleService.db
+      .update(costCenters)
+      .set({
+        title,
+        description,
+        updatedAt: new Date(),
+      })
+      .where(eq(costCenters.id, centerCostId))
+      .returning()
+      .then((res) => res[0]);
   }
 
-  remove(userId: number, addressId: number): Promise<void> {
-    throw new Error('Method not implemented.');
+  async remove(centerCostId: number): Promise<void> {
+    await this.drizzleService.db
+      .delete(costCenters)
+      .where(eq(costCenters.id, centerCostId));
+
+    return;
   }
 }
