@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CostCenterRepository } from 'src/app/repositories/const-center.repository';
+import { CostCenterRepository } from 'src/app/repositories/cost-center.repository';
 import { DrizzleService } from '../drizzle.service';
 import { CreateCostCenterDto } from 'src/app/modules/cost_center/dto/create-cost-center.dto';
 import { ResponseCostCenterDto } from 'src/app/modules/cost_center/dto/response-cost-center.dto';
@@ -19,7 +19,7 @@ export class DrizzleCostCenterRepository implements CostCenterRepository {
 
     const costCenter = await this.drizzleService.db
       .insert(costCenters)
-      .values({ title, description, userId })
+      .values({ title, description: description, userId })
       .returning();
 
     return costCenter[0];
@@ -29,7 +29,15 @@ export class DrizzleCostCenterRepository implements CostCenterRepository {
     userId: number,
     isActive?: boolean,
   ): Promise<ResponseCostCenterDto[]> {
-    return await this.drizzleService.db
+    const whereClause =
+      isActive !== undefined
+        ? and(
+            eq(managements.userId, userId),
+            eq(costCenters.isActive, isActive),
+          )
+        : eq(managements.userId, userId);
+
+    const result = await this.drizzleService.db
       .select({
         id: costCenters.id,
         title: costCenters.title,
@@ -40,9 +48,9 @@ export class DrizzleCostCenterRepository implements CostCenterRepository {
       })
       .from(costCenters)
       .innerJoin(managements, eq(costCenters.id, managements.costCenterId))
-      .where(
-        and(eq(managements.userId, userId), eq(costCenters.isActive, isActive)),
-      );
+      .where(whereClause);
+
+    return result;
   }
 
   findOne(userId: number, addressId: number): Promise<ResponseCostCenterDto> {

@@ -64,7 +64,7 @@ export const managements = pgTable(
   'managements',
   {
     costCenterId: integer('cost_center_id')
-      .references(() => costCenters.id)
+      .references(() => costCenters.id, { onDelete: 'cascade' })
       .notNull(),
     roleId: integer('role_id')
       .references(() => roles.id)
