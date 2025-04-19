@@ -8,7 +8,7 @@ export abstract class ManagementRepository {
     createManagement: CreateManagementDto,
   ): Promise<ResponseManagementDto>;
 
-  abstract findByCostCenterIds(
-    costCenterIds: number[],
+  abstract findByCostCenterId(
+    costCenterId: number,
   ): Promise<ResponseManagementDto[]>;
 }

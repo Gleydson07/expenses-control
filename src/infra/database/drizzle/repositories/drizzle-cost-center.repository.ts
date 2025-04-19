@@ -59,7 +59,10 @@ export class DrizzleCostCenterRepository implements CostCenterRepository {
     return result;
   }
 
-  async findOne(centerCostId: number): Promise<ResponseCostCenterDto> {
+  async findOne(
+    centerCostId: number,
+    userId: number,
+  ): Promise<ResponseCostCenterDto> {
     return await this.drizzleService.db
       .select({
         id: costCenters.id,
@@ -70,8 +73,15 @@ export class DrizzleCostCenterRepository implements CostCenterRepository {
         updatedAt: costCenters.updatedAt,
       })
       .from(costCenters)
-      .where(eq(costCenters.id, centerCostId))
-      .then((res) => res[0]);
+      .innerJoin(managements, eq(costCenters.id, managements.costCenterId))
+      .where(
+        and(eq(managements.userId, userId), eq(costCenters.id, centerCostId)),
+      )
+      .then((res) => {
+        if (res.length === 0) return null;
+
+        return res[0];
+      });
   }
 
   async update(

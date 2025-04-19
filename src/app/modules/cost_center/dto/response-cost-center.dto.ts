@@ -9,7 +9,6 @@ export class ResponseCostCenterDto {
 
 export class ResponseCostCenterWithManagementsDto extends ResponseCostCenterDto {
   managements: {
-    id: number;
     userId: number;
     roleId: number;
     createdAt: Date;

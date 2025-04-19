@@ -5,11 +5,17 @@ import { CostCenterRepository } from 'src/app/repositories/cost-center.repositor
 import { CreateCostCenterUseCase } from './usecases/create-cost-center.usecase';
 import { ManagementModule } from '../management/management.module';
 import { FindByUserIdCostCenterUseCase } from './usecases/find-by-user-id-cost-center.usecase';
+import { FindByIdCostCenterUseCase } from './usecases/find-by-id-cost-center.usecase';
+import { UpdateCostCenterUseCase } from './usecases/update-cost-center.usecase';
+import { DeleteCostCenterUseCase } from './usecases/delete-cost-center.usecase';
 
 @Module({
   imports: [ManagementModule],
   controllers: [CostCenterController],
   providers: [
+    DeleteCostCenterUseCase,
+    UpdateCostCenterUseCase,
+    FindByIdCostCenterUseCase,
     FindByUserIdCostCenterUseCase,
     CreateCostCenterUseCase,
     {

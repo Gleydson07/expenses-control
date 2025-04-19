@@ -23,8 +23,8 @@ export class DrizzleManagementRepository implements ManagementRepository {
     return management[0];
   }
 
-  async findByCostCenterIds(
-    costCenterIds: number[],
+  async findByCostCenterId(
+    costCenterId: number,
   ): Promise<ResponseManagementDto[]> {
     return await this.drizzleService.db
       .select({
@@ -35,6 +35,7 @@ export class DrizzleManagementRepository implements ManagementRepository {
         updatedAt: managements.updatedAt,
       })
       .from(managements)
-      .where(inArray(managements.costCenterId, costCenterIds));
+      .where(eq(managements.costCenterId, costCenterId))
+      .execute();
   }
 }
