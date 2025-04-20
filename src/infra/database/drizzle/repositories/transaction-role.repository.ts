@@ -16,12 +16,16 @@ export class DrizzleTransactionRepository implements TransactionRepository {
     createTransaction: CreateTransactionDto,
     tx?: Transaction,
   ): Promise<ResponseTransactionDto> {
+    const params = {
+      ...createTransaction,
+      status: transactionStatusEnum.PLANNING,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
     const data = await (tx ? tx : this.drizzleService.db)
       .insert(transactions)
-      .values({
-        ...createTransaction,
-        status: transactionStatusEnum.PLANNING,
-      })
+      .values(params)
       .returning()
       .then((res) => res[0]);
 
@@ -104,9 +108,14 @@ export class DrizzleTransactionRepository implements TransactionRepository {
     updateTransaction: UpdateTransactionDto,
     tx?: Transaction,
   ): Promise<ResponseTransactionDto> {
+    const params = {
+      ...updateTransaction,
+      updatedAt: new Date(),
+    };
+
     const data = await (tx ? tx : this.drizzleService.db)
       .update(transactions)
-      .set(updateTransaction)
+      .set(params)
       .where(eq(transactions.id, transactionId))
       .returning()
       .then((res) => res[0]);

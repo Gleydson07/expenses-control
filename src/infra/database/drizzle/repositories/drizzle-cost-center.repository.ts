@@ -6,6 +6,7 @@ import { ResponseCostCenterDto } from 'src/app/modules/cost_center/dto/response-
 import { costCenters, managements } from 'drizzle/schema.drizzle';
 import { UpdateCostCenterDto } from 'src/app/modules/cost_center/dto/update-cost-center.dto';
 import { and, eq } from 'drizzle-orm';
+import { create } from 'domain';
 
 @Injectable()
 export class DrizzleCostCenterRepository implements CostCenterRepository {
@@ -16,12 +17,16 @@ export class DrizzleCostCenterRepository implements CostCenterRepository {
     createCostCenter: CreateCostCenterDto,
     tx?: Transaction,
   ): Promise<ResponseCostCenterDto> {
+    const params = {
+      ...createCostCenter,
+      ownerUserId: userId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
     const data = await (tx ? tx : this.drizzleService.db)
       .insert(costCenters)
-      .values({
-        ...createCostCenter,
-        ownerUserId: userId,
-      })
+      .values(params)
       .returning()
       .then((res) => res[0]);
 
@@ -112,9 +117,14 @@ export class DrizzleCostCenterRepository implements CostCenterRepository {
     updateCostCenter: UpdateCostCenterDto,
     tx?: Transaction,
   ): Promise<ResponseCostCenterDto> {
+    const params = {
+      ...updateCostCenter,
+      updatedAt: new Date(),
+    };
+
     const data = await (tx ? tx : this.drizzleService.db)
       .update(costCenters)
-      .set(updateCostCenter)
+      .set(params)
       .where(eq(costCenters.id, centerCostId))
       .returning()
       .then((res) => res[0]);

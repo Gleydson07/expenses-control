@@ -15,9 +15,15 @@ export class DrizzleCategoryRepository implements CategoryRepository {
     createCategory: CreateCategoryDto,
     tx?: Transaction,
   ): Promise<ResponseCategoryDto> {
+    const params = {
+      ...createCategory,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
     const data = await (tx ? tx : this.drizzleService.db)
       .insert(categories)
-      .values(createCategory)
+      .values(params)
       .returning()
       .then((res) => res[0]);
 
@@ -80,9 +86,14 @@ export class DrizzleCategoryRepository implements CategoryRepository {
     updateCategory: UpdateCategoryDto,
     tx?: Transaction,
   ): Promise<ResponseCategoryDto> {
+    const params = {
+      ...updateCategory,
+      updatedAt: new Date(),
+    };
+
     const data = await (tx ? tx : this.drizzleService.db)
       .update(categories)
-      .set(updateCategory)
+      .set(params)
       .where(eq(categories.id, categoryId))
       .returning()
       .then((res) => res[0]);

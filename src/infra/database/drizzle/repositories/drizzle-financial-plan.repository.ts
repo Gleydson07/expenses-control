@@ -16,9 +16,15 @@ export class DrizzleFinancialPlanRepository implements FinancialPlanRepository {
     createFinancialPlan: CreateFinancialPlanDto,
     tx?: Transaction,
   ): Promise<ResponseFinancialPlanDto> {
+    const params = {
+      ...createFinancialPlan,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
     const data = await (tx ? tx : this.drizzleService.db)
       .insert(financialPlans)
-      .values(createFinancialPlan)
+      .values(params)
       .returning()
       .then((res) => res[0]);
 
@@ -92,9 +98,14 @@ export class DrizzleFinancialPlanRepository implements FinancialPlanRepository {
     updateFinancialPlan: UpdateFinancialPlanDto,
     tx?: Transaction,
   ): Promise<ResponseFinancialPlanDto> {
+    const params = {
+      ...updateFinancialPlan,
+      updatedAt: new Date(),
+    };
+
     const data = await (tx ? tx : this.drizzleService.db)
       .update(financialPlans)
-      .set(updateFinancialPlan)
+      .set(params)
       .where(eq(financialPlans.id, financialPlanId))
       .returning()
       .then((res) => res[0]);

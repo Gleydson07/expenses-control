@@ -15,9 +15,15 @@ export class DrizzleRoleRepository implements RoleRepository {
     createRole: CreateRoleDto,
     tx?: Transaction,
   ): Promise<ResponseRoleDto> {
+    const params = {
+      ...createRole,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
     const data = await (tx ? tx : this.drizzleService.db)
       .insert(roles)
-      .values(createRole)
+      .values(params)
       .returning()
       .then((res) => res[0]);
 
@@ -130,9 +136,14 @@ export class DrizzleRoleRepository implements RoleRepository {
     updateRole: UpdateRoleDto,
     tx?: Transaction,
   ): Promise<ResponseRoleDto> {
+    const params = {
+      ...updateRole,
+      updatedAt: new Date(),
+    };
+
     const data = await (tx ? tx : this.drizzleService.db)
       .update(roles)
-      .set(updateRole)
+      .set(params)
       .where(eq(roles.id, roleId))
       .returning()
       .then((res) => res[0]);

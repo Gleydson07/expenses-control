@@ -14,9 +14,15 @@ export class DrizzleManagementRepository implements ManagementRepository {
     createManagement: CreateManagementDto,
     tx?: Transaction,
   ): Promise<ResponseManagementDto> {
+    const params = {
+      ...createManagement,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
     const data = await (tx ? tx : this.drizzleService.db)
       .insert(managements)
-      .values(createManagement)
+      .values(params)
       .returning()
       .then((res) => res[0]);
 

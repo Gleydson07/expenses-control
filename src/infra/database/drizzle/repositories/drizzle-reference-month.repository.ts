@@ -18,9 +18,15 @@ export class DrizzleReferenceMonthRepository
     createReferenceMonths: CreateReferenceMonthDto[],
     tx?: Transaction,
   ): Promise<ResponseReferenceMonthDto[]> {
+    const params = createReferenceMonths.map((refMonth) => ({
+      ...refMonth,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+
     const data = await (tx ? tx : this.drizzleService.db)
       .insert(referenceMonths)
-      .values(createReferenceMonths)
+      .values(params)
       .returning();
 
     return data.map((dt) => ({
@@ -118,9 +124,14 @@ export class DrizzleReferenceMonthRepository
     updateReferenceMonth: UpdateReferenceMonthDto,
     tx?: Transaction,
   ): Promise<ResponseReferenceMonthDto> {
+    const params = {
+      ...updateReferenceMonth,
+      updatedAt: new Date(),
+    };
+
     const data = await (tx ? tx : this.drizzleService.db)
       .update(referenceMonths)
-      .set(updateReferenceMonth)
+      .set(params)
       .where(eq(referenceMonths.id, referenceMonthId))
       .returning()
       .then((res) => res[0]);

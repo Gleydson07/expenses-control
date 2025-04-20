@@ -5,8 +5,8 @@ CREATE TABLE "categories" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"title" varchar(128) NOT NULL,
 	"description" varchar(2048),
-	"created_at" timestamp DEFAULT now(),
-	"updated_at" timestamp DEFAULT now(),
+	"created_at" timestamp,
+	"updated_at" timestamp,
 	CONSTRAINT "categories_title_unique" UNIQUE("title")
 );
 --> statement-breakpoint
@@ -16,8 +16,8 @@ CREATE TABLE "cost_centers" (
 	"owner_user_id" integer NOT NULL,
 	"description" varchar(2048),
 	"is_active" boolean DEFAULT true,
-	"created_at" timestamp DEFAULT now(),
-	"updated_at" timestamp DEFAULT now(),
+	"created_at" timestamp,
+	"updated_at" timestamp,
 	CONSTRAINT "un_cost_centers_title_owner_user_id" UNIQUE("title","owner_user_id")
 );
 --> statement-breakpoint
@@ -27,8 +27,8 @@ CREATE TABLE "financial_plans" (
 	"title" varchar(128) NOT NULL,
 	"description" varchar(2048),
 	"type" "financial_plan_type" NOT NULL,
-	"created_at" timestamp DEFAULT now(),
-	"updated_at" timestamp DEFAULT now(),
+	"created_at" timestamp,
+	"updated_at" timestamp,
 	CONSTRAINT "financial_plans_title_unique" UNIQUE("title")
 );
 --> statement-breakpoint
@@ -51,8 +51,8 @@ CREATE TABLE "reference_months" (
 	"month" integer NOT NULL,
 	"year" integer NOT NULL,
 	"notes" varchar(8000),
-	"created_at" timestamp DEFAULT now(),
-	"updated_at" timestamp DEFAULT now(),
+	"created_at" timestamp,
+	"updated_at" timestamp,
 	CONSTRAINT "un_reference_months_cost_center_id_month_year" UNIQUE("cost_center_id","month","year"),
 	CONSTRAINT "month_range_check" CHECK (month >= 1 AND month <= 12)
 );
@@ -66,8 +66,8 @@ CREATE TABLE "roles" (
 	"can_read" boolean DEFAULT false,
 	"can_remove" boolean DEFAULT false,
 	"is_active" boolean DEFAULT true,
-	"created_at" timestamp DEFAULT now(),
-	"updated_at" timestamp DEFAULT now(),
+	"created_at" timestamp,
+	"updated_at" timestamp,
 	CONSTRAINT "roles_title_unique" UNIQUE("title"),
 	CONSTRAINT "un_roles_title_ccreate_cedit_cread_cremove" UNIQUE("can_create","can_edit","can_read","can_remove")
 );
@@ -80,8 +80,8 @@ CREATE TABLE "transactions" (
 	"estimated_value" numeric(9, 2) DEFAULT '0',
 	"value" numeric(9, 2) DEFAULT '0',
 	"payment_date" timestamp,
-	"created_at" timestamp DEFAULT now(),
-	"updated_at" timestamp DEFAULT now()
+	"created_at" timestamp,
+	"updated_at" timestamp
 );
 --> statement-breakpoint
 ALTER TABLE "financial_plans" ADD CONSTRAINT "financial_plans_category_id_categories_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."categories"("id") ON DELETE restrict ON UPDATE no action;--> statement-breakpoint

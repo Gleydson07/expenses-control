@@ -38,8 +38,8 @@ export const costCenters = pgTable(
     ownerUserId: integer('owner_user_id').notNull(),
     description: varchar('description', { length: 2048 }),
     isActive: boolean('is_active').default(true),
-    createdAt: timestamp('created_at').defaultNow(),
-    updatedAt: timestamp('updated_at').defaultNow(),
+    createdAt: timestamp('created_at'),
+    updatedAt: timestamp('updated_at'),
   },
   (costCenter) => [
     unique('un_cost_centers_title_owner_user_id').on(
@@ -60,8 +60,8 @@ export const roles = pgTable(
     canRead: boolean('can_read').default(false),
     canRemove: boolean('can_remove').default(false),
     isActive: boolean('is_active').default(true),
-    createdAt: timestamp('created_at').defaultNow(),
-    updatedAt: timestamp('updated_at').defaultNow(),
+    createdAt: timestamp('created_at'),
+    updatedAt: timestamp('updated_at'),
   },
   (role) => [
     unique('un_roles_title_ccreate_cedit_cread_cremove').on(
@@ -77,8 +77,8 @@ export const categories = pgTable('categories', {
   id: serial('id').primaryKey(),
   title: varchar('title', { length: 128 }).notNull().unique(),
   description: varchar('description', { length: 2048 }),
-  createdAt: timestamp('created_at').defaultNow(),
-  updatedAt: timestamp('updated_at').defaultNow(),
+  createdAt: timestamp('created_at'),
+  updatedAt: timestamp('updated_at'),
 });
 
 export const managements = pgTable(
@@ -127,8 +127,8 @@ export const referenceMonths = pgTable(
     month: integer('month').notNull(),
     year: integer('year').notNull(),
     notes: varchar('notes', { length: 8000 }),
-    createdAt: timestamp('created_at').defaultNow(),
-    updatedAt: timestamp('updated_at').defaultNow(),
+    createdAt: timestamp('created_at'),
+    updatedAt: timestamp('updated_at'),
   },
   (referenceMonths) => [
     check('month_range_check', sql`month >= 1 AND month <= 12`),
@@ -148,8 +148,8 @@ export const financialPlans = pgTable('financial_plans', {
   title: varchar('title', { length: 128 }).notNull().unique(),
   description: varchar('description', { length: 2048 }),
   type: financialPlanTypeEnum('type').notNull(),
-  createdAt: timestamp('created_at').defaultNow(),
-  updatedAt: timestamp('updated_at').defaultNow(),
+  createdAt: timestamp('created_at'),
+  updatedAt: timestamp('updated_at'),
 });
 
 export const transactions = pgTable('transactions', {
@@ -167,6 +167,6 @@ export const transactions = pgTable('transactions', {
   }).default('0'),
   value: decimal('value', { precision: 9, scale: 2 }).default('0'),
   paymentDate: timestamp('payment_date'),
-  createdAt: timestamp('created_at').defaultNow(),
-  updatedAt: timestamp('updated_at').defaultNow(),
+  createdAt: timestamp('created_at'),
+  updatedAt: timestamp('updated_at'),
 });
