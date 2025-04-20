@@ -1,4 +1,4 @@
-import { isNotNull, sql } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 import {
   pgTable,
   serial,
@@ -25,12 +25,9 @@ export const referenceMonthStatusesEnum = pgEnum('reference_months_status', [
 ]);
 
 export const transactionStatusEnum = pgEnum('transaction_status', [
-  'PENDING',
+  'PLANNING',
   'SCHEDULED',
   'PAID',
-  'PARTIALLY_PAID',
-  'OVERDUE',
-  'CANCELLED',
 ]);
 
 export const costCenters = pgTable(

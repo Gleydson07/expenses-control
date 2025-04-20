@@ -12,16 +12,27 @@ export class DrizzleRoleRepository implements RoleRepository {
   constructor(private readonly drizzleService: DrizzleService) {}
 
   async create(createRole: CreateRoleDto): Promise<ResponseRoleDto> {
-    const role = await this.drizzleService.db
+    const data = await this.drizzleService.db
       .insert(roles)
       .values(createRole)
-      .returning();
+      .returning()
+      .then((res) => res[0]);
 
-    return role[0];
+    return {
+      id: data.id,
+      title: data.title,
+      description: data.description,
+      canCreate: data.canCreate,
+      canEdit: data.canEdit,
+      canRead: data.canRead,
+      canRemove: data.canRemove,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+    };
   }
 
   async findAll(): Promise<ResponseRoleDto[]> {
-    return await this.drizzleService.db
+    const data = await this.drizzleService.db
       .select({
         id: roles.id,
         title: roles.title,
@@ -34,10 +45,22 @@ export class DrizzleRoleRepository implements RoleRepository {
         updatedAt: roles.updatedAt,
       })
       .from(roles);
+
+    return data.map((dt) => ({
+      id: dt.id,
+      title: dt.title,
+      description: dt.description,
+      canCreate: dt.canCreate,
+      canEdit: dt.canEdit,
+      canRead: dt.canRead,
+      canRemove: dt.canRemove,
+      createdAt: dt.createdAt,
+      updatedAt: dt.updatedAt,
+    }));
   }
 
   async findOne(roleId: number): Promise<ResponseRoleDto> {
-    return await this.drizzleService.db
+    const data = await this.drizzleService.db
       .select({
         id: roles.id,
         title: roles.title,
@@ -51,29 +74,61 @@ export class DrizzleRoleRepository implements RoleRepository {
       })
       .from(roles)
       .where(eq(roles.id, roleId))
-      .then((res) => {
-        if (res.length === 0) return null;
+      .then((res) => res[0]);
 
-        return res[0];
-      });
+    return {
+      id: data.id,
+      title: data.title,
+      description: data.description,
+      canCreate: data.canCreate,
+      canEdit: data.canEdit,
+      canRead: data.canRead,
+      canRemove: data.canRemove,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+    };
   }
 
   async findOneByTitle(title: string): Promise<ResponseRoleDto> {
-    return await this.drizzleService.db.query.roles.findFirst({
+    const data = await this.drizzleService.db.query.roles.findFirst({
       where: eq(this.drizzleService.schema.roles.title, title),
     });
+
+    return {
+      id: data.id,
+      title: data.title,
+      description: data.description,
+      canCreate: data.canCreate,
+      canEdit: data.canEdit,
+      canRead: data.canRead,
+      canRemove: data.canRemove,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+    };
   }
 
   async update(
     roleId: number,
     updateRole: UpdateRoleDto,
   ): Promise<ResponseRoleDto> {
-    return this.drizzleService.db
+    const data = await this.drizzleService.db
       .update(roles)
       .set(updateRole)
       .where(eq(roles.id, roleId))
       .returning()
       .then((res) => res[0]);
+
+    return {
+      id: data.id,
+      title: data.title,
+      description: data.description,
+      canCreate: data.canCreate,
+      canEdit: data.canEdit,
+      canRead: data.canRead,
+      canRemove: data.canRemove,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+    };
   }
 
   async remove(roleId: number): Promise<void> {

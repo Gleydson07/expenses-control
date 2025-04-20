@@ -15,24 +15,25 @@ export class DrizzleFinancialPlanRepository implements FinancialPlanRepository {
   async create(
     createFinancialPlan: CreateFinancialPlanDto,
   ): Promise<ResponseFinancialPlanDto> {
-    const financialPlan = await this.drizzleService.db
+    const data = await this.drizzleService.db
       .insert(financialPlans)
       .values(createFinancialPlan)
-      .returning();
+      .returning()
+      .then((res) => res[0]);
 
     return {
-      id: financialPlan[0].id,
-      title: financialPlan[0].title,
-      description: financialPlan[0].description,
-      type: financialPlan[0].type as financialPlanTypeEnum,
-      categoryId: financialPlan[0].categoryId,
-      createdAt: financialPlan[0].createdAt,
-      updatedAt: financialPlan[0].updatedAt,
+      id: data.id,
+      title: data.title,
+      description: data.description,
+      type: data.type as financialPlanTypeEnum,
+      categoryId: data.categoryId,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
     };
   }
 
   async findAll(): Promise<ResponseFinancialPlanDto[]> {
-    const finPlans = await this.drizzleService.db
+    const data = await this.drizzleService.db
       .select({
         id: financialPlans.id,
         title: financialPlans.title,
@@ -45,19 +46,19 @@ export class DrizzleFinancialPlanRepository implements FinancialPlanRepository {
       .from(financialPlans)
       .orderBy(desc(financialPlans.createdAt));
 
-    return finPlans.map((financialPlan) => ({
-      id: financialPlan.id,
-      title: financialPlan.title,
-      description: financialPlan.description,
-      type: financialPlan.type as financialPlanTypeEnum,
-      categoryId: financialPlan.categoryId,
-      createdAt: financialPlan.createdAt,
-      updatedAt: financialPlan.updatedAt,
+    return data.map((dt) => ({
+      id: dt.id,
+      title: dt.title,
+      description: dt.description,
+      type: dt.type as financialPlanTypeEnum,
+      categoryId: dt.categoryId,
+      createdAt: dt.createdAt,
+      updatedAt: dt.updatedAt,
     }));
   }
 
   async findOne(financialPlanId: number): Promise<ResponseFinancialPlanDto> {
-    const finPlan = await this.drizzleService.db
+    const data = await this.drizzleService.db
       .select({
         id: financialPlans.id,
         title: financialPlans.title,
@@ -72,13 +73,13 @@ export class DrizzleFinancialPlanRepository implements FinancialPlanRepository {
       .then((res) => res[0]);
 
     return {
-      id: finPlan.id,
-      title: finPlan.title,
-      description: finPlan.description,
-      type: finPlan.type as financialPlanTypeEnum,
-      categoryId: finPlan.categoryId,
-      createdAt: finPlan.createdAt,
-      updatedAt: finPlan.updatedAt,
+      id: data.id,
+      title: data.title,
+      description: data.description,
+      type: data.type as financialPlanTypeEnum,
+      categoryId: data.categoryId,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
     };
   }
 
@@ -86,7 +87,7 @@ export class DrizzleFinancialPlanRepository implements FinancialPlanRepository {
     financialPlanId: number,
     updateFinancialPlan: UpdateFinancialPlanDto,
   ): Promise<ResponseFinancialPlanDto> {
-    const finPlan = await this.drizzleService.db
+    const data = await this.drizzleService.db
       .update(financialPlans)
       .set(updateFinancialPlan)
       .where(eq(financialPlans.id, financialPlanId))
@@ -94,13 +95,13 @@ export class DrizzleFinancialPlanRepository implements FinancialPlanRepository {
       .then((res) => res[0]);
 
     return {
-      id: finPlan.id,
-      title: finPlan.title,
-      description: finPlan.description,
-      type: finPlan.type as financialPlanTypeEnum,
-      categoryId: finPlan.categoryId,
-      createdAt: finPlan.createdAt,
-      updatedAt: finPlan.updatedAt,
+      id: data.id,
+      title: data.title,
+      description: data.description,
+      type: data.type as financialPlanTypeEnum,
+      categoryId: data.categoryId,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
     };
   }
 
@@ -108,7 +109,5 @@ export class DrizzleFinancialPlanRepository implements FinancialPlanRepository {
     await this.drizzleService.db
       .delete(financialPlans)
       .where(eq(financialPlans.id, financialPlanId));
-
-    return;
   }
 }

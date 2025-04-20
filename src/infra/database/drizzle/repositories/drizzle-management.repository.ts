@@ -13,18 +13,25 @@ export class DrizzleManagementRepository implements ManagementRepository {
   async create(
     createManagement: CreateManagementDto,
   ): Promise<ResponseManagementDto> {
-    const management = await this.drizzleService.db
+    const data = await this.drizzleService.db
       .insert(managements)
       .values(createManagement)
-      .returning();
+      .returning()
+      .then((res) => res[0]);
 
-    return management[0];
+    return {
+      costCenterId: data.costCenterId,
+      userId: data.userId,
+      roleId: data.roleId,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+    };
   }
 
   async findByCostCenterId(
     costCenterId: number,
   ): Promise<ResponseManagementDto[]> {
-    const manags = await this.drizzleService.db
+    const data = await this.drizzleService.db
       .select({
         costCenterId: managements.costCenterId,
         userId: managements.userId,
@@ -36,17 +43,17 @@ export class DrizzleManagementRepository implements ManagementRepository {
       .where(eq(managements.costCenterId, costCenterId))
       .execute();
 
-    return manags.map((management) => ({
-      costCenterId: management.costCenterId,
-      userId: management.userId,
-      roleId: management.roleId,
-      createdAt: management.createdAt,
-      updatedAt: management.updatedAt,
+    return data.map((dt) => ({
+      costCenterId: dt.costCenterId,
+      userId: dt.userId,
+      roleId: dt.roleId,
+      createdAt: dt.createdAt,
+      updatedAt: dt.updatedAt,
     }));
   }
 
   async findByUserId(userId: number): Promise<ResponseManagementDto[]> {
-    const manags = await this.drizzleService.db
+    const data = await this.drizzleService.db
       .select({
         costCenterId: managements.costCenterId,
         userId: managements.userId,
@@ -58,12 +65,12 @@ export class DrizzleManagementRepository implements ManagementRepository {
       .where(eq(managements.userId, userId))
       .execute();
 
-    return manags.map((management) => ({
-      costCenterId: management.costCenterId,
-      userId: management.userId,
-      roleId: management.roleId,
-      createdAt: management.createdAt,
-      updatedAt: management.updatedAt,
+    return data.map((dt) => ({
+      costCenterId: dt.costCenterId,
+      userId: dt.userId,
+      roleId: dt.roleId,
+      createdAt: dt.createdAt,
+      updatedAt: dt.updatedAt,
     }));
   }
 

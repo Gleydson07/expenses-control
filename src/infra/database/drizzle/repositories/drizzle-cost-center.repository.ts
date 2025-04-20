@@ -15,15 +15,24 @@ export class DrizzleCostCenterRepository implements CostCenterRepository {
     userId: number,
     createCostCenter: CreateCostCenterDto,
   ): Promise<ResponseCostCenterDto> {
-    const costCenter = await this.drizzleService.db
+    const data = await this.drizzleService.db
       .insert(costCenters)
       .values({
         ...createCostCenter,
         ownerUserId: userId,
       })
-      .returning();
+      .returning()
+      .then((res) => res[0]);
 
-    return costCenter[0];
+    return {
+      id: data.id,
+      title: data.title,
+      description: data.description,
+      ownerUserId: data.ownerUserId,
+      isActive: data.isActive,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+    };
   }
 
   async findAll(
@@ -38,7 +47,7 @@ export class DrizzleCostCenterRepository implements CostCenterRepository {
           )
         : eq(managements.userId, userId);
 
-    const result = await this.drizzleService.db
+    const data = await this.drizzleService.db
       .select({
         id: costCenters.id,
         title: costCenters.title,
@@ -52,14 +61,22 @@ export class DrizzleCostCenterRepository implements CostCenterRepository {
       .innerJoin(managements, eq(costCenters.id, managements.costCenterId))
       .where(whereClause);
 
-    return result;
+    return data.map((dt) => ({
+      id: dt.id,
+      title: dt.title,
+      description: dt.description,
+      ownerUserId: dt.ownerUserId,
+      isActive: dt.isActive,
+      createdAt: dt.createdAt,
+      updatedAt: dt.updatedAt,
+    }));
   }
 
   async findOne(
     centerCostId: number,
     userId: number,
   ): Promise<ResponseCostCenterDto> {
-    return await this.drizzleService.db
+    const data = await this.drizzleService.db
       .select({
         id: costCenters.id,
         title: costCenters.title,
@@ -74,30 +91,44 @@ export class DrizzleCostCenterRepository implements CostCenterRepository {
       .where(
         and(eq(managements.userId, userId), eq(costCenters.id, centerCostId)),
       )
-      .then((res) => {
-        if (res.length === 0) return null;
+      .then((res) => res[0]);
 
-        return res[0];
-      });
+    return {
+      id: data.id,
+      title: data.title,
+      description: data.description,
+      ownerUserId: data.ownerUserId,
+      isActive: data.isActive,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+    };
   }
 
   async update(
     centerCostId: number,
     updateCostCenter: UpdateCostCenterDto,
   ): Promise<ResponseCostCenterDto> {
-    return this.drizzleService.db
+    const data = await this.drizzleService.db
       .update(costCenters)
       .set(updateCostCenter)
       .where(eq(costCenters.id, centerCostId))
       .returning()
       .then((res) => res[0]);
+
+    return {
+      id: data.id,
+      title: data.title,
+      description: data.description,
+      ownerUserId: data.ownerUserId,
+      isActive: data.isActive,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+    };
   }
 
   async remove(centerCostId: number): Promise<void> {
     await this.drizzleService.db
       .delete(costCenters)
       .where(eq(costCenters.id, centerCostId));
-
-    return;
   }
 }

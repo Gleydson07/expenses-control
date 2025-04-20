@@ -17,33 +17,34 @@ export class DrizzleReferenceMonthRepository
   async create(
     createReferenceMonth: CreateReferenceMonthDto,
   ): Promise<ResponseReferenceMonthDto> {
-    const referenceMonth = await this.drizzleService.db
+    const data = await this.drizzleService.db
       .insert(referenceMonths)
       .values({
         ...createReferenceMonth,
         status: referenceMonthStatusesEnum.PLANNING,
       })
-      .returning();
+      .returning()
+      .then((res) => res[0]);
 
     return {
-      id: referenceMonth[0].id,
-      costCenterId: referenceMonth[0].costCenterId,
-      month: referenceMonth[0].month,
-      year: referenceMonth[0].year,
-      notes: referenceMonth[0].notes,
-      status: referenceMonth[0].status as referenceMonthStatusesEnum,
-      expensesTotalValue: Number(referenceMonth[0].expensesTotalValue),
-      incomesTotalValue: Number(referenceMonth[0].incomesTotalValue),
-      balance: Number(referenceMonth[0].balance),
-      createdAt: referenceMonth[0].createdAt,
-      updatedAt: referenceMonth[0].updatedAt,
+      id: data.id,
+      costCenterId: data.costCenterId,
+      month: data.month,
+      year: data.year,
+      notes: data.notes,
+      status: data.status as referenceMonthStatusesEnum,
+      expensesTotalValue: Number(data.expensesTotalValue),
+      incomesTotalValue: Number(data.incomesTotalValue),
+      balance: Number(data.balance),
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
     };
   }
 
   async findByCostCenterId(
     costCenterId: number,
   ): Promise<ResponseReferenceMonthDto[]> {
-    const refMonths = await this.drizzleService.db
+    const data = await this.drizzleService.db
       .select({
         id: referenceMonths.id,
         costCenterId: referenceMonths.costCenterId,
@@ -61,23 +62,23 @@ export class DrizzleReferenceMonthRepository
       .where(eq(referenceMonths.costCenterId, costCenterId))
       .execute();
 
-    return refMonths.map((refMonth) => ({
-      id: refMonth.id,
-      costCenterId: refMonth.costCenterId,
-      month: refMonth.month,
-      year: refMonth.year,
-      notes: refMonth.notes,
-      status: refMonth.status as referenceMonthStatusesEnum,
-      expensesTotalValue: Number(refMonth.expensesTotalValue),
-      incomesTotalValue: Number(refMonth.incomesTotalValue),
-      balance: Number(refMonth.balance),
-      createdAt: refMonth.createdAt,
-      updatedAt: refMonth.updatedAt,
+    return data.map((dt) => ({
+      id: dt.id,
+      costCenterId: dt.costCenterId,
+      month: dt.month,
+      year: dt.year,
+      notes: dt.notes,
+      status: dt.status as referenceMonthStatusesEnum,
+      expensesTotalValue: Number(dt.expensesTotalValue),
+      incomesTotalValue: Number(dt.incomesTotalValue),
+      balance: Number(dt.balance),
+      createdAt: dt.createdAt,
+      updatedAt: dt.updatedAt,
     }));
   }
 
   async findById(referenceMonthId: number): Promise<ResponseReferenceMonthDto> {
-    const refMonths = await this.drizzleService.db
+    const data = await this.drizzleService.db
       .select({
         id: referenceMonths.id,
         costCenterId: referenceMonths.costCenterId,
@@ -93,20 +94,21 @@ export class DrizzleReferenceMonthRepository
       })
       .from(referenceMonths)
       .where(eq(referenceMonths.id, referenceMonthId))
-      .execute();
+      .execute()
+      .then((res) => res[0]);
 
     return {
-      id: refMonths[0].id,
-      costCenterId: refMonths[0].costCenterId,
-      month: refMonths[0].month,
-      year: refMonths[0].year,
-      notes: refMonths[0].notes,
-      status: refMonths[0].status as referenceMonthStatusesEnum,
-      expensesTotalValue: Number(refMonths[0].expensesTotalValue),
-      incomesTotalValue: Number(refMonths[0].incomesTotalValue),
-      balance: Number(refMonths[0].balance),
-      createdAt: refMonths[0].createdAt,
-      updatedAt: refMonths[0].updatedAt,
+      id: data.id,
+      costCenterId: data.costCenterId,
+      month: data.month,
+      year: data.year,
+      notes: data.notes,
+      status: data.status as referenceMonthStatusesEnum,
+      expensesTotalValue: Number(data.expensesTotalValue),
+      incomesTotalValue: Number(data.incomesTotalValue),
+      balance: Number(data.balance),
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
     };
   }
 
@@ -114,24 +116,25 @@ export class DrizzleReferenceMonthRepository
     referenceMonthId: number,
     updateReferenceMonth: UpdateReferenceMonthDto,
   ): Promise<ResponseReferenceMonthDto> {
-    const refMonth = await this.drizzleService.db
+    const data = await this.drizzleService.db
       .update(referenceMonths)
       .set(updateReferenceMonth)
       .where(eq(referenceMonths.id, referenceMonthId))
-      .returning();
+      .returning()
+      .then((res) => res[0]);
 
     return {
-      id: refMonth[0].id,
-      costCenterId: refMonth[0].costCenterId,
-      month: refMonth[0].month,
-      year: refMonth[0].year,
-      notes: refMonth[0].notes,
-      status: refMonth[0].status as referenceMonthStatusesEnum,
-      expensesTotalValue: Number(refMonth[0].expensesTotalValue),
-      incomesTotalValue: Number(refMonth[0].incomesTotalValue),
-      balance: Number(refMonth[0].balance),
-      createdAt: refMonth[0].createdAt,
-      updatedAt: refMonth[0].updatedAt,
+      id: data.id,
+      costCenterId: data.costCenterId,
+      month: data.month,
+      year: data.year,
+      notes: data.notes,
+      status: data.status as referenceMonthStatusesEnum,
+      expensesTotalValue: Number(data.expensesTotalValue),
+      incomesTotalValue: Number(data.incomesTotalValue),
+      balance: Number(data.balance),
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
     };
   }
 

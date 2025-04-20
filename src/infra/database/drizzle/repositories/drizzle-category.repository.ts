@@ -14,16 +14,23 @@ export class DrizzleCategoryRepository implements CategoryRepository {
   async create(
     createCategory: CreateCategoryDto,
   ): Promise<ResponseCategoryDto> {
-    const category = await this.drizzleService.db
+    const data = await this.drizzleService.db
       .insert(categories)
       .values(createCategory)
-      .returning();
+      .returning()
+      .then((res) => res[0]);
 
-    return category[0];
+    return {
+      id: data.id,
+      title: data.title,
+      description: data.description,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+    };
   }
 
   async findAll(): Promise<ResponseCategoryDto[]> {
-    return await this.drizzleService.db
+    const data = await this.drizzleService.db
       .select({
         id: categories.id,
         title: categories.title,
@@ -32,10 +39,18 @@ export class DrizzleCategoryRepository implements CategoryRepository {
         updatedAt: categories.updatedAt,
       })
       .from(categories);
+
+    return data.map((dt) => ({
+      id: dt.id,
+      title: dt.title,
+      description: dt.description,
+      createdAt: dt.createdAt,
+      updatedAt: dt.updatedAt,
+    }));
   }
 
   async findOne(categoryId: number): Promise<ResponseCategoryDto> {
-    return await this.drizzleService.db
+    const data = await this.drizzleService.db
       .select({
         id: categories.id,
         title: categories.title,
@@ -45,32 +60,40 @@ export class DrizzleCategoryRepository implements CategoryRepository {
       })
       .from(categories)
       .where(eq(categories.id, categoryId))
-      .then((res) => {
-        if (res.length === 0) return null;
+      .then((res) => res[0]);
 
-        return res[0];
-      });
+    return {
+      id: data.id,
+      title: data.title,
+      description: data.description,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+    };
   }
 
   async update(
     categoryId: number,
     updateCategory: UpdateCategoryDto,
   ): Promise<ResponseCategoryDto> {
-    const { title, description } = updateCategory;
-
-    return this.drizzleService.db
+    const data = await this.drizzleService.db
       .update(categories)
       .set(updateCategory)
       .where(eq(categories.id, categoryId))
       .returning()
       .then((res) => res[0]);
+
+    return {
+      id: data.id,
+      title: data.title,
+      description: data.description,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+    };
   }
 
   async remove(categoryId: number): Promise<void> {
     await this.drizzleService.db
       .delete(categories)
       .where(eq(categories.id, categoryId));
-
-    return;
   }
 }
