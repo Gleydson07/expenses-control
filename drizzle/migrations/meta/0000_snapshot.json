@@ -1,5 +1,5 @@
 {
-  "id": "016b0c1b-0f7f-40d4-bc44-6a0dabb1e6d7",
+  "id": "12911df2-5c22-4107-8020-a99fb6796e3f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -119,6 +119,76 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.financial_plans": {
+      "name": "financial_plans",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "category_id": {
+          "name": "category_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar(2048)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "type": {
+          "name": "type",
+          "type": "planned_transaction_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "financial_plans_category_id_categories_id_fk": {
+          "name": "financial_plans_category_id_categories_id_fk",
+          "tableFrom": "financial_plans",
+          "tableTo": "categories",
+          "columnsFrom": [
+            "category_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.managements": {
       "name": "managements",
       "schema": "",
@@ -193,83 +263,6 @@
           ]
         }
       },
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.planned_transactions": {
-      "name": "planned_transactions",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "category_id": {
-          "name": "category_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "title": {
-          "name": "title",
-          "type": "varchar(128)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "description": {
-          "name": "description",
-          "type": "varchar(2048)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "type": {
-          "name": "type",
-          "type": "planned_transaction_type",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "estimated_value": {
-          "name": "estimated_value",
-          "type": "numeric(9, 2)",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'0'"
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "planned_transactions_category_id_categories_id_fk": {
-          "name": "planned_transactions_category_id_categories_id_fk",
-          "tableFrom": "planned_transactions",
-          "tableTo": "categories",
-          "columnsFrom": [
-            "category_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
@@ -491,8 +484,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "planned_transaction_id": {
-          "name": "planned_transaction_id",
+        "financial_plan_id": {
+          "name": "financial_plan_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
@@ -504,12 +497,25 @@
           "primaryKey": false,
           "notNull": true
         },
+        "estimated_value": {
+          "name": "estimated_value",
+          "type": "numeric(9, 2)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'0'"
+        },
         "value": {
           "name": "value",
           "type": "numeric(9, 2)",
           "primaryKey": false,
           "notNull": false,
           "default": "'0'"
+        },
+        "payment_date": {
+          "name": "payment_date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",
@@ -539,12 +545,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "transactions_planned_transaction_id_transactions_id_fk": {
-          "name": "transactions_planned_transaction_id_transactions_id_fk",
+        "transactions_financial_plan_id_financial_plans_id_fk": {
+          "name": "transactions_financial_plan_id_financial_plans_id_fk",
           "tableFrom": "transactions",
-          "tableTo": "transactions",
+          "tableTo": "financial_plans",
           "columnsFrom": [
-            "planned_transaction_id"
+            "financial_plan_id"
           ],
           "columnsTo": [
             "id"

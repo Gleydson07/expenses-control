@@ -99,7 +99,7 @@ export const managements = pgTable(
   ],
 );
 
-export const plannedTransactions = pgTable('planned_transactions', {
+export const financialPlans = pgTable('financial_plans', {
   id: serial('id').primaryKey(),
   categoryId: integer('category_id')
     .references(() => categories.id)
@@ -107,10 +107,6 @@ export const plannedTransactions = pgTable('planned_transactions', {
   title: varchar('title', { length: 128 }),
   description: varchar('description', { length: 2048 }),
   type: plannedTransactionTypeEnum('type').notNull(),
-  estimatedValue: decimal('estimated_value', {
-    precision: 9,
-    scale: 2,
-  }).default('0'),
   createdAt: timestamp('created_at'),
   updatedAt: timestamp('updated_at'),
 });
@@ -155,11 +151,16 @@ export const transactions = pgTable('transactions', {
   referenceMonthId: integer('reference_month_id')
     .references(() => referenceMonths.id)
     .notNull(),
-  plannedTransactionId: integer('planned_transaction_id')
-    .references(() => transactions.id)
+  financialPlanId: integer('financial_plan_id')
+    .references(() => financialPlans.id)
     .notNull(),
   status: transactionStatusEnum('status').notNull(),
+  estimatedValue: decimal('estimated_value', {
+    precision: 9,
+    scale: 2,
+  }).default('0'),
   value: decimal('value', { precision: 9, scale: 2 }).default('0'),
+  paymentDate: timestamp('payment_date'),
   createdAt: timestamp('created_at'),
   updatedAt: timestamp('updated_at'),
 });

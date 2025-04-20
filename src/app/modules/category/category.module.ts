@@ -21,5 +21,6 @@ import { FindAllCategoriesUseCase } from './usecases/find-all-categories.usecase
       useClass: DrizzleCategoryRepository,
     },
   ],
+  exports: [CategoryRepository],
 })
 export class CategoryModule {}

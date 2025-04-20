@@ -28,6 +28,7 @@ export class FindByIdCostCenterUseCase {
       id: costCenter.id,
       title: costCenter.title,
       description: costCenter.description,
+      ownerUserId: costCenter.ownerUserId,
       isActive: costCenter.isActive,
       createdAt: costCenter.createdAt,
       updatedAt: costCenter.updatedAt,

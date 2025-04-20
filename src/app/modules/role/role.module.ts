@@ -21,5 +21,6 @@ import { FindAllRolesUseCase } from './usecases/find-all-roles.usecase';
       useClass: DrizzleRoleRepository,
     },
   ],
+  exports: [RoleRepository],
 })
 export class RoleModule {}
