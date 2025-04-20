@@ -1,11 +1,16 @@
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { ConfigService } from '@nestjs/config';
-import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
+import type {
+  PostgresJsDatabase,
+  PostgresJsTransaction,
+} from 'drizzle-orm/postgres-js';
 import * as schema from '../../../../drizzle/schema.drizzle';
 
 // @ts-ignore
 const postgres = require('postgres');
+
+export type Transaction = PostgresJsTransaction<typeof schema, {}>;
 
 @Injectable()
 export class DrizzleService implements OnModuleDestroy {

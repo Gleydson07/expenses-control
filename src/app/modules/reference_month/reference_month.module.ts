@@ -11,5 +11,6 @@ import { DrizzleReferenceMonthRepository } from 'src/infra/database/drizzle/repo
       useClass: DrizzleReferenceMonthRepository,
     },
   ],
+  exports: [ReferenceMonthRepository],
 })
 export class ReferenceMonthModule {}

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CostCenterRepository } from 'src/app/repositories/cost-center.repository';
-import { DrizzleService } from '../drizzle.service';
+import { DrizzleService, Transaction } from '../drizzle.service';
 import { CreateCostCenterDto } from 'src/app/modules/cost_center/dto/create-cost-center.dto';
 import { ResponseCostCenterDto } from 'src/app/modules/cost_center/dto/response-cost-center.dto';
 import { costCenters, managements } from 'drizzle/schema.drizzle';
@@ -14,8 +14,9 @@ export class DrizzleCostCenterRepository implements CostCenterRepository {
   async create(
     userId: number,
     createCostCenter: CreateCostCenterDto,
+    tx?: Transaction,
   ): Promise<ResponseCostCenterDto> {
-    const data = await this.drizzleService.db
+    const data = await (tx ? tx : this.drizzleService.db)
       .insert(costCenters)
       .values({
         ...createCostCenter,
@@ -38,6 +39,7 @@ export class DrizzleCostCenterRepository implements CostCenterRepository {
   async findAll(
     userId: number,
     isActive?: boolean,
+    tx?: Transaction,
   ): Promise<ResponseCostCenterDto[]> {
     const whereClause =
       isActive !== undefined
@@ -47,7 +49,7 @@ export class DrizzleCostCenterRepository implements CostCenterRepository {
           )
         : eq(managements.userId, userId);
 
-    const data = await this.drizzleService.db
+    const data = await (tx ? tx : this.drizzleService.db)
       .select({
         id: costCenters.id,
         title: costCenters.title,
@@ -75,8 +77,9 @@ export class DrizzleCostCenterRepository implements CostCenterRepository {
   async findOne(
     centerCostId: number,
     userId: number,
+    tx?: Transaction,
   ): Promise<ResponseCostCenterDto> {
-    const data = await this.drizzleService.db
+    const data = await (tx ? tx : this.drizzleService.db)
       .select({
         id: costCenters.id,
         title: costCenters.title,
@@ -107,8 +110,9 @@ export class DrizzleCostCenterRepository implements CostCenterRepository {
   async update(
     centerCostId: number,
     updateCostCenter: UpdateCostCenterDto,
+    tx?: Transaction,
   ): Promise<ResponseCostCenterDto> {
-    const data = await this.drizzleService.db
+    const data = await (tx ? tx : this.drizzleService.db)
       .update(costCenters)
       .set(updateCostCenter)
       .where(eq(costCenters.id, centerCostId))
@@ -126,8 +130,8 @@ export class DrizzleCostCenterRepository implements CostCenterRepository {
     };
   }
 
-  async remove(centerCostId: number): Promise<void> {
-    await this.drizzleService.db
+  async remove(centerCostId: number, tx?: Transaction): Promise<void> {
+    await (tx ? tx : this.drizzleService.db)
       .delete(costCenters)
       .where(eq(costCenters.id, centerCostId));
   }

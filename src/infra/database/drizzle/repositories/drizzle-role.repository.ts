@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { RoleRepository } from 'src/app/repositories/role.repository';
-import { DrizzleService } from '../drizzle.service';
+import { DrizzleService, Transaction } from '../drizzle.service';
 import { roles } from 'drizzle/schema.drizzle';
-import { eq } from 'drizzle-orm';
+import { eq, ilike } from 'drizzle-orm';
 import { CreateRoleDto } from 'src/app/modules/role/dto/create-role.dto';
 import { ResponseRoleDto } from 'src/app/modules/role/dto/response-role.dto';
 import { UpdateRoleDto } from 'src/app/modules/role/dto/update-role.dto';
@@ -11,8 +11,11 @@ import { UpdateRoleDto } from 'src/app/modules/role/dto/update-role.dto';
 export class DrizzleRoleRepository implements RoleRepository {
   constructor(private readonly drizzleService: DrizzleService) {}
 
-  async create(createRole: CreateRoleDto): Promise<ResponseRoleDto> {
-    const data = await this.drizzleService.db
+  async create(
+    createRole: CreateRoleDto,
+    tx?: Transaction,
+  ): Promise<ResponseRoleDto> {
+    const data = await (tx ? tx : this.drizzleService.db)
       .insert(roles)
       .values(createRole)
       .returning()
@@ -31,8 +34,8 @@ export class DrizzleRoleRepository implements RoleRepository {
     };
   }
 
-  async findAll(): Promise<ResponseRoleDto[]> {
-    const data = await this.drizzleService.db
+  async findAll(tx?: Transaction): Promise<ResponseRoleDto[]> {
+    const data = await (tx ? tx : this.drizzleService.db)
       .select({
         id: roles.id,
         title: roles.title,
@@ -59,8 +62,8 @@ export class DrizzleRoleRepository implements RoleRepository {
     }));
   }
 
-  async findOne(roleId: number): Promise<ResponseRoleDto> {
-    const data = await this.drizzleService.db
+  async findOne(roleId: number, tx?: Transaction): Promise<ResponseRoleDto> {
+    const data = await (tx ? tx : this.drizzleService.db)
       .select({
         id: roles.id,
         title: roles.title,
@@ -89,10 +92,25 @@ export class DrizzleRoleRepository implements RoleRepository {
     };
   }
 
-  async findOneByTitle(title: string): Promise<ResponseRoleDto> {
-    const data = await this.drizzleService.db.query.roles.findFirst({
-      where: eq(this.drizzleService.schema.roles.title, title),
-    });
+  async findOneByTitle(
+    title: string,
+    tx?: Transaction,
+  ): Promise<ResponseRoleDto> {
+    const data = await (tx ? tx : this.drizzleService.db)
+      .select({
+        id: roles.id,
+        title: roles.title,
+        description: roles.description,
+        canCreate: roles.canCreate,
+        canEdit: roles.canEdit,
+        canRead: roles.canRead,
+        canRemove: roles.canRemove,
+        createdAt: roles.createdAt,
+        updatedAt: roles.updatedAt,
+      })
+      .from(roles)
+      .where(ilike(this.drizzleService.schema.roles.title, title))
+      .then((res) => res[0]);
 
     return {
       id: data.id,
@@ -110,8 +128,9 @@ export class DrizzleRoleRepository implements RoleRepository {
   async update(
     roleId: number,
     updateRole: UpdateRoleDto,
+    tx?: Transaction,
   ): Promise<ResponseRoleDto> {
-    const data = await this.drizzleService.db
+    const data = await (tx ? tx : this.drizzleService.db)
       .update(roles)
       .set(updateRole)
       .where(eq(roles.id, roleId))
@@ -131,7 +150,9 @@ export class DrizzleRoleRepository implements RoleRepository {
     };
   }
 
-  async remove(roleId: number): Promise<void> {
-    await this.drizzleService.db.delete(roles).where(eq(roles.id, roleId));
+  async remove(roleId: number, tx?: Transaction): Promise<void> {
+    await (tx ? tx : this.drizzleService.db)
+      .delete(roles)
+      .where(eq(roles.id, roleId));
   }
 }

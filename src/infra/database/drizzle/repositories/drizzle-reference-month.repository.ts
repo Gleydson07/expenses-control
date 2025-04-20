@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DrizzleService } from '../drizzle.service';
+import { DrizzleService, Transaction } from '../drizzle.service';
 import { eq } from 'drizzle-orm';
 import { ReferenceMonthRepository } from 'src/app/repositories/reference-month.repository';
 import { CreateReferenceMonthDto } from 'src/app/modules/reference_month/dto/create-reference-month.dto';
@@ -16,8 +16,9 @@ export class DrizzleReferenceMonthRepository
 
   async createMany(
     createReferenceMonths: CreateReferenceMonthDto[],
+    tx?: Transaction,
   ): Promise<ResponseReferenceMonthDto[]> {
-    const data = await this.drizzleService.db
+    const data = await (tx ? tx : this.drizzleService.db)
       .insert(referenceMonths)
       .values(createReferenceMonths)
       .returning();
@@ -39,8 +40,9 @@ export class DrizzleReferenceMonthRepository
 
   async findByCostCenterId(
     costCenterId: number,
+    tx?: Transaction,
   ): Promise<ResponseReferenceMonthDto[]> {
-    const data = await this.drizzleService.db
+    const data = await (tx ? tx : this.drizzleService.db)
       .select({
         id: referenceMonths.id,
         costCenterId: referenceMonths.costCenterId,
@@ -73,8 +75,11 @@ export class DrizzleReferenceMonthRepository
     }));
   }
 
-  async findById(referenceMonthId: number): Promise<ResponseReferenceMonthDto> {
-    const data = await this.drizzleService.db
+  async findById(
+    referenceMonthId: number,
+    tx?: Transaction,
+  ): Promise<ResponseReferenceMonthDto> {
+    const data = await (tx ? tx : this.drizzleService.db)
       .select({
         id: referenceMonths.id,
         costCenterId: referenceMonths.costCenterId,
@@ -111,8 +116,9 @@ export class DrizzleReferenceMonthRepository
   async update(
     referenceMonthId: number,
     updateReferenceMonth: UpdateReferenceMonthDto,
+    tx?: Transaction,
   ): Promise<ResponseReferenceMonthDto> {
-    const data = await this.drizzleService.db
+    const data = await (tx ? tx : this.drizzleService.db)
       .update(referenceMonths)
       .set(updateReferenceMonth)
       .where(eq(referenceMonths.id, referenceMonthId))
@@ -134,8 +140,8 @@ export class DrizzleReferenceMonthRepository
     };
   }
 
-  async delete(refMonthId: number): Promise<void> {
-    await this.drizzleService.db
+  async delete(refMonthId: number, tx?: Transaction): Promise<void> {
+    await (tx ? tx : this.drizzleService.db)
       .delete(referenceMonths)
       .where(eq(referenceMonths.id, refMonthId))
       .execute();

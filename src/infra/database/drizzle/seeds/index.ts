@@ -26,18 +26,18 @@ async function main() {
   });
 
   if (!existingRole) {
+    const admin = {
+      title: 'Admin',
+      description: 'Administrador geral',
+      canCreate: true,
+      canEdit: true,
+      canRead: true,
+      canRemove: true,
+    };
+
     const [adminRole] = await db
       .insert(schema.roles)
-      .values({
-        title: 'Admin',
-        description: 'Administrador geral',
-        canCreate: true,
-        canEdit: true,
-        canRead: true,
-        canRemove: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      })
+      .values(admin)
       .returning({ id: schema.roles.id });
 
     console.log('Role admin criada:', adminRole.id);

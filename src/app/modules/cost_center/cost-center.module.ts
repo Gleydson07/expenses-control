@@ -9,9 +9,10 @@ import { FindByIdCostCenterUseCase } from './usecases/find-by-id-cost-center.use
 import { UpdateCostCenterUseCase } from './usecases/update-cost-center.usecase';
 import { DeleteCostCenterUseCase } from './usecases/delete-cost-center.usecase';
 import { RoleModule } from '../role/role.module';
+import { ReferenceMonthModule } from '../reference_month/reference_month.module';
 
 @Module({
-  imports: [ManagementModule, RoleModule],
+  imports: [ManagementModule, RoleModule, ReferenceMonthModule],
   controllers: [CostCenterController],
   providers: [
     DeleteCostCenterUseCase,

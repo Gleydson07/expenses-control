@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DrizzleService } from '../drizzle.service';
+import { DrizzleService, Transaction } from '../drizzle.service';
 import { transactions } from 'drizzle/schema.drizzle';
 import { eq } from 'drizzle-orm';
 import { TransactionRepository } from 'src/app/repositories/transaction.repository';
@@ -14,8 +14,9 @@ export class DrizzleTransactionRepository implements TransactionRepository {
 
   async create(
     createTransaction: CreateTransactionDto,
+    tx?: Transaction,
   ): Promise<ResponseTransactionDto> {
-    const data = await this.drizzleService.db
+    const data = await (tx ? tx : this.drizzleService.db)
       .insert(transactions)
       .values({
         ...createTransaction,
@@ -37,8 +38,8 @@ export class DrizzleTransactionRepository implements TransactionRepository {
     };
   }
 
-  async findAll(): Promise<ResponseTransactionDto[]> {
-    const data = await this.drizzleService.db
+  async findAll(tx?: Transaction): Promise<ResponseTransactionDto[]> {
+    const data = await (tx ? tx : this.drizzleService.db)
       .select({
         id: transactions.id,
         referenceMonthId: transactions.referenceMonthId,
@@ -65,8 +66,11 @@ export class DrizzleTransactionRepository implements TransactionRepository {
     }));
   }
 
-  async findOne(transactionId: number): Promise<ResponseTransactionDto> {
-    const data = await this.drizzleService.db
+  async findOne(
+    transactionId: number,
+    tx?: Transaction,
+  ): Promise<ResponseTransactionDto> {
+    const data = await (tx ? tx : this.drizzleService.db)
       .select({
         id: transactions.id,
         referenceMonthId: transactions.referenceMonthId,
@@ -98,8 +102,9 @@ export class DrizzleTransactionRepository implements TransactionRepository {
   async update(
     transactionId: number,
     updateTransaction: UpdateTransactionDto,
+    tx?: Transaction,
   ): Promise<ResponseTransactionDto> {
-    const data = await this.drizzleService.db
+    const data = await (tx ? tx : this.drizzleService.db)
       .update(transactions)
       .set(updateTransaction)
       .where(eq(transactions.id, transactionId))
@@ -119,8 +124,8 @@ export class DrizzleTransactionRepository implements TransactionRepository {
     };
   }
 
-  async remove(transactionId: number): Promise<void> {
-    await this.drizzleService.db
+  async remove(transactionId: number, tx?: Transaction): Promise<void> {
+    await (tx ? tx : this.drizzleService.db)
       .delete(transactions)
       .where(eq(transactions.id, transactionId));
   }

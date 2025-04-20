@@ -6,10 +6,8 @@ import {
   Param,
   Put,
   Delete,
-  HttpStatus,
   HttpCode,
 } from '@nestjs/common';
-import { CreateCostCenterDto } from './dto/create-cost-center.dto';
 import { CreateCostCenterUseCase } from './usecases/create-cost-center.usecase';
 import { UserFromToken } from 'src/infra/auth/dto/token-payload.dto';
 import { User } from 'src/infra/auth/decorators/user-extract-auth.decorator';
@@ -18,6 +16,7 @@ import { FindByIdCostCenterUseCase } from './usecases/find-by-id-cost-center.use
 import { UpdateCostCenterUseCase } from './usecases/update-cost-center.usecase';
 import { UpdateCostCenterDto } from './dto/update-cost-center.dto';
 import { DeleteCostCenterUseCase } from './usecases/delete-cost-center.usecase';
+import { CreateCostCenterUseCaseDto } from './dto/create-cost-center.usecase.dto';
 
 @Controller()
 export class CostCenterController {
@@ -31,10 +30,10 @@ export class CostCenterController {
 
   @Post()
   create(
-    @Body() createCostCenterDto: CreateCostCenterDto,
+    @Body() createCostCenter: CreateCostCenterUseCaseDto,
     @User() user: UserFromToken,
   ) {
-    return this.createCostCenterUseCase.execute(user.sub, createCostCenterDto);
+    return this.createCostCenterUseCase.execute(user.sub, createCostCenter);
   }
 
   @Get()

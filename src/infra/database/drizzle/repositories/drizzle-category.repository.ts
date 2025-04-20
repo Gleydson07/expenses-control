@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CategoryRepository } from 'src/app/repositories/category.repository';
-import { DrizzleService } from '../drizzle.service';
+import { DrizzleService, Transaction } from '../drizzle.service';
 import { categories } from 'drizzle/schema.drizzle';
 import { eq } from 'drizzle-orm';
 import { CreateCategoryDto } from 'src/app/modules/category/dto/create-category.dto';
@@ -13,8 +13,9 @@ export class DrizzleCategoryRepository implements CategoryRepository {
 
   async create(
     createCategory: CreateCategoryDto,
+    tx?: Transaction,
   ): Promise<ResponseCategoryDto> {
-    const data = await this.drizzleService.db
+    const data = await (tx ? tx : this.drizzleService.db)
       .insert(categories)
       .values(createCategory)
       .returning()
@@ -29,8 +30,8 @@ export class DrizzleCategoryRepository implements CategoryRepository {
     };
   }
 
-  async findAll(): Promise<ResponseCategoryDto[]> {
-    const data = await this.drizzleService.db
+  async findAll(tx?: Transaction): Promise<ResponseCategoryDto[]> {
+    const data = await (tx ? tx : this.drizzleService.db)
       .select({
         id: categories.id,
         title: categories.title,
@@ -49,8 +50,11 @@ export class DrizzleCategoryRepository implements CategoryRepository {
     }));
   }
 
-  async findOne(categoryId: number): Promise<ResponseCategoryDto> {
-    const data = await this.drizzleService.db
+  async findOne(
+    categoryId: number,
+    tx?: Transaction,
+  ): Promise<ResponseCategoryDto> {
+    const data = await (tx ? tx : this.drizzleService.db)
       .select({
         id: categories.id,
         title: categories.title,
@@ -74,8 +78,9 @@ export class DrizzleCategoryRepository implements CategoryRepository {
   async update(
     categoryId: number,
     updateCategory: UpdateCategoryDto,
+    tx?: Transaction,
   ): Promise<ResponseCategoryDto> {
-    const data = await this.drizzleService.db
+    const data = await (tx ? tx : this.drizzleService.db)
       .update(categories)
       .set(updateCategory)
       .where(eq(categories.id, categoryId))
@@ -91,8 +96,8 @@ export class DrizzleCategoryRepository implements CategoryRepository {
     };
   }
 
-  async remove(categoryId: number): Promise<void> {
-    await this.drizzleService.db
+  async remove(categoryId: number, tx?: Transaction): Promise<void> {
+    await (tx ? tx : this.drizzleService.db)
       .delete(categories)
       .where(eq(categories.id, categoryId));
   }

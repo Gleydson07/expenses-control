@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DrizzleService } from '../drizzle.service';
+import { DrizzleService, Transaction } from '../drizzle.service';
 import { financialPlans } from 'drizzle/schema.drizzle';
 import { desc, eq } from 'drizzle-orm';
 import { FinancialPlanRepository } from 'src/app/repositories/financial-plan.repository';
@@ -14,8 +14,9 @@ export class DrizzleFinancialPlanRepository implements FinancialPlanRepository {
 
   async create(
     createFinancialPlan: CreateFinancialPlanDto,
+    tx?: Transaction,
   ): Promise<ResponseFinancialPlanDto> {
-    const data = await this.drizzleService.db
+    const data = await (tx ? tx : this.drizzleService.db)
       .insert(financialPlans)
       .values(createFinancialPlan)
       .returning()
@@ -32,8 +33,8 @@ export class DrizzleFinancialPlanRepository implements FinancialPlanRepository {
     };
   }
 
-  async findAll(): Promise<ResponseFinancialPlanDto[]> {
-    const data = await this.drizzleService.db
+  async findAll(tx?: Transaction): Promise<ResponseFinancialPlanDto[]> {
+    const data = await (tx ? tx : this.drizzleService.db)
       .select({
         id: financialPlans.id,
         title: financialPlans.title,
@@ -57,8 +58,11 @@ export class DrizzleFinancialPlanRepository implements FinancialPlanRepository {
     }));
   }
 
-  async findOne(financialPlanId: number): Promise<ResponseFinancialPlanDto> {
-    const data = await this.drizzleService.db
+  async findOne(
+    financialPlanId: number,
+    tx?: Transaction,
+  ): Promise<ResponseFinancialPlanDto> {
+    const data = await (tx ? tx : this.drizzleService.db)
       .select({
         id: financialPlans.id,
         title: financialPlans.title,
@@ -86,8 +90,9 @@ export class DrizzleFinancialPlanRepository implements FinancialPlanRepository {
   async update(
     financialPlanId: number,
     updateFinancialPlan: UpdateFinancialPlanDto,
+    tx?: Transaction,
   ): Promise<ResponseFinancialPlanDto> {
-    const data = await this.drizzleService.db
+    const data = await (tx ? tx : this.drizzleService.db)
       .update(financialPlans)
       .set(updateFinancialPlan)
       .where(eq(financialPlans.id, financialPlanId))
@@ -105,8 +110,8 @@ export class DrizzleFinancialPlanRepository implements FinancialPlanRepository {
     };
   }
 
-  async remove(financialPlanId: number): Promise<void> {
-    await this.drizzleService.db
+  async remove(financialPlanId: number, tx?: Transaction): Promise<void> {
+    await (tx ? tx : this.drizzleService.db)
       .delete(financialPlans)
       .where(eq(financialPlans.id, financialPlanId));
   }

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DrizzleService } from '../drizzle.service';
+import { DrizzleService, Transaction } from '../drizzle.service';
 import { managements } from 'drizzle/schema.drizzle';
 import { and, eq } from 'drizzle-orm';
 import { ManagementRepository } from 'src/app/repositories/management.repository';
@@ -12,8 +12,9 @@ export class DrizzleManagementRepository implements ManagementRepository {
 
   async create(
     createManagement: CreateManagementDto,
+    tx?: Transaction,
   ): Promise<ResponseManagementDto> {
-    const data = await this.drizzleService.db
+    const data = await (tx ? tx : this.drizzleService.db)
       .insert(managements)
       .values(createManagement)
       .returning()
@@ -30,8 +31,9 @@ export class DrizzleManagementRepository implements ManagementRepository {
 
   async findByCostCenterId(
     costCenterId: number,
+    tx?: Transaction,
   ): Promise<ResponseManagementDto[]> {
-    const data = await this.drizzleService.db
+    const data = await (tx ? tx : this.drizzleService.db)
       .select({
         costCenterId: managements.costCenterId,
         userId: managements.userId,
@@ -52,8 +54,11 @@ export class DrizzleManagementRepository implements ManagementRepository {
     }));
   }
 
-  async findByUserId(userId: number): Promise<ResponseManagementDto[]> {
-    const data = await this.drizzleService.db
+  async findByUserId(
+    userId: number,
+    tx?: Transaction,
+  ): Promise<ResponseManagementDto[]> {
+    const data = await (tx ? tx : this.drizzleService.db)
       .select({
         costCenterId: managements.costCenterId,
         userId: managements.userId,
@@ -78,8 +83,9 @@ export class DrizzleManagementRepository implements ManagementRepository {
     costCenterId: number,
     userId: number,
     roleId: number,
+    tx?: Transaction,
   ): Promise<void> {
-    await this.drizzleService.db
+    await (tx ? tx : this.drizzleService.db)
       .delete(managements)
       .where(
         and(
