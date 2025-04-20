@@ -11,4 +11,12 @@ export abstract class ManagementRepository {
   abstract findByCostCenterId(
     costCenterId: number,
   ): Promise<ResponseManagementDto[]>;
+
+  abstract findByUserId(userId: number): Promise<ResponseManagementDto[]>;
+
+  abstract delete(
+    costCenterId: number,
+    userId: number,
+    roleId?: number,
+  ): Promise<void>;
 }

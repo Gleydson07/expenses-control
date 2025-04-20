@@ -8,6 +8,7 @@ import {
   integer,
   pgEnum,
   primaryKey,
+  unique,
 } from 'drizzle-orm/pg-core';
 
 export const plannedTransactionTypeEnum = pgEnum('planned_transaction_type', [
@@ -31,17 +32,28 @@ export const transactionStatusEnum = pgEnum('transaction_status', [
   'CANCELLED',
 ]);
 
-export const roles = pgTable('roles', {
-  id: serial('id').primaryKey(),
-  title: varchar('title', { length: 128 }).unique(),
-  description: varchar('description', { length: 2048 }),
-  canCreate: boolean('can_create'),
-  canEdit: boolean('can_edit'),
-  canRead: boolean('can_read'),
-  canRemove: boolean('can_remove'),
-  createdAt: timestamp('created_at'),
-  updatedAt: timestamp('updated_at'),
-});
+export const roles = pgTable(
+  'roles',
+  {
+    id: serial('id').primaryKey(),
+    title: varchar('title', { length: 128 }).unique(),
+    description: varchar('description', { length: 2048 }),
+    canCreate: boolean('can_create'),
+    canEdit: boolean('can_edit'),
+    canRead: boolean('can_read'),
+    canRemove: boolean('can_remove'),
+    createdAt: timestamp('created_at'),
+    updatedAt: timestamp('updated_at'),
+  },
+  (role) => [
+    unique('un_roles_title_ccreate_cedit_cread_cremove').on(
+      role.canCreate,
+      role.canEdit,
+      role.canRead,
+      role.canRemove,
+    ),
+  ],
+);
 
 export const categories = pgTable('categories', {
   id: serial('id').primaryKey(),
