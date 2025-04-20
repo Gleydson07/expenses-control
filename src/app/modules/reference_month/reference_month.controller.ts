@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, Param, Post, Put } from '@nestjs/common';
 import { CreateReferenceMonthsUseCase } from './usecases/create-reference-months.usecase';
 import { ResponseReferenceMonthDto } from './dto/response-reference-month.dto';
 import { CreateReferenceMonthsUseCaseDto } from './dto/create-reference-months.usecase.dto';
@@ -19,7 +19,7 @@ export class ReferenceMonthController {
     return await this.createReferenceMonthsUseCase.execute(data);
   }
 
-  @Post(':id')
+  @Put(':id')
   async updateReferenceMonth(
     @Param('id') id: string,
     @Body() data: UpdateStatusReferenceMonthUseCaseDto,
