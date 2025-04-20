@@ -3,12 +3,14 @@ import { CostCenterRepository } from 'src/app/repositories/cost-center.repositor
 import { ResponseCostCenterDto } from '../dto/response-cost-center.dto';
 import { CreateCostCenterDto } from '../dto/create-cost-center.dto';
 import { ManagementRepository } from 'src/app/repositories/management.repository';
+import { RoleRepository } from 'src/app/repositories/role.repository';
 
 @Injectable()
 export class CreateCostCenterUseCase {
   constructor(
     private readonly costCenterRepository: CostCenterRepository,
     private readonly managementRepository: ManagementRepository,
+    private readonly roleRepository: RoleRepository,
   ) {}
 
   async execute(
@@ -20,10 +22,12 @@ export class CreateCostCenterUseCase {
       description: data?.description,
     });
 
+    const role = await this.roleRepository.findOneByTitle('admin');
+
     await this.managementRepository.create({
       userId,
       costCenterId: costCenter.id,
-      roleId: 1, //:TODO Alterar por uma busca pelo admin
+      roleId: role?.id || 1,
     });
 
     return costCenter;

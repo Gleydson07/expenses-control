@@ -2,6 +2,7 @@ export class ResponseCostCenterDto {
   id: number;
   title: string;
   description?: string;
+  ownerUserId: number;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;

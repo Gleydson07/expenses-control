@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm';
 import {
   pgTable,
   serial,
@@ -9,6 +10,7 @@ import {
   pgEnum,
   primaryKey,
   unique,
+  check,
 } from 'drizzle-orm/pg-core';
 
 export const plannedTransactionTypeEnum = pgEnum('planned_transaction_type', [
@@ -17,9 +19,9 @@ export const plannedTransactionTypeEnum = pgEnum('planned_transaction_type', [
 ]);
 
 export const referenceMonthStatusesEnum = pgEnum('reference_months_status', [
-  'OPEN',
+  'PLANNING',
   'IN_PROGRESS',
-  'COMPLETED',
+  'FINALIZED',
   'CLOSED',
 ]);
 
@@ -31,6 +33,16 @@ export const transactionStatusEnum = pgEnum('transaction_status', [
   'OVERDUE',
   'CANCELLED',
 ]);
+
+export const costCenters = pgTable('cost_centers', {
+  id: serial('id').primaryKey(),
+  title: varchar('title', { length: 128 }).unique(),
+  ownerUserId: integer('owner_user_id'),
+  description: varchar('description', { length: 2048 }),
+  isActive: boolean('is_active').default(true),
+  createdAt: timestamp('created_at'),
+  updatedAt: timestamp('updated_at'),
+});
 
 export const roles = pgTable(
   'roles',
@@ -59,15 +71,6 @@ export const categories = pgTable('categories', {
   id: serial('id').primaryKey(),
   title: varchar('title', { length: 128 }).unique(),
   description: varchar('description', { length: 2048 }),
-  createdAt: timestamp('created_at'),
-  updatedAt: timestamp('updated_at'),
-});
-
-export const costCenters = pgTable('cost_centers', {
-  id: serial('id').primaryKey(),
-  title: varchar('title', { length: 128 }).unique(),
-  description: varchar('description', { length: 2048 }),
-  isActive: boolean('is_active').default(true),
   createdAt: timestamp('created_at'),
   updatedAt: timestamp('updated_at'),
 });
@@ -112,29 +115,40 @@ export const plannedTransactions = pgTable('planned_transactions', {
   updatedAt: timestamp('updated_at'),
 });
 
-export const referenceMonths = pgTable('reference_months', {
-  id: serial('id').primaryKey(),
-  costCenterId: integer('cost_center_id')
-    .references(() => costCenters.id)
-    .notNull(),
-  status: referenceMonthStatusesEnum('status').notNull(),
-  expensesTotalValue: decimal('expenses_total_value', {
-    precision: 12,
-    scale: 2,
-  }).default('0'),
-  incomesTotalValue: decimal('incomes_total_value', {
-    precision: 12,
-    scale: 2,
-  }).default('0'),
-  balance: decimal('balance', { precision: 12, scale: 2 }).generatedAlwaysAs(
-    'incomes_total_value - expenses_total_value',
-  ),
-  month: timestamp('month'),
-  year: timestamp('year'),
-  notes: varchar('notes'),
-  createdAt: timestamp('created_at'),
-  updatedAt: timestamp('updated_at'),
-});
+export const referenceMonths = pgTable(
+  'reference_months',
+  {
+    id: serial('id').primaryKey(),
+    costCenterId: integer('cost_center_id')
+      .references(() => costCenters.id)
+      .notNull(),
+    status: referenceMonthStatusesEnum('status').notNull(),
+    expensesTotalValue: decimal('expenses_total_value', {
+      precision: 12,
+      scale: 2,
+    }).default('0'),
+    incomesTotalValue: decimal('incomes_total_value', {
+      precision: 12,
+      scale: 2,
+    }).default('0'),
+    balance: decimal('balance', { precision: 12, scale: 2 }).generatedAlwaysAs(
+      'incomes_total_value - expenses_total_value',
+    ),
+    month: integer('month').notNull(),
+    year: integer('year').notNull(),
+    notes: varchar('notes'),
+    createdAt: timestamp('created_at'),
+    updatedAt: timestamp('updated_at'),
+  },
+  (referenceMonths) => [
+    check('month_range_check', sql`month >= 1 AND month <= 12`),
+    unique('un_reference_months_cost_center_id_month_year').on(
+      referenceMonths.costCenterId,
+      referenceMonths.month,
+      referenceMonths.year,
+    ),
+  ],
+);
 
 export const transactions = pgTable('transactions', {
   id: serial('id').primaryKey(),

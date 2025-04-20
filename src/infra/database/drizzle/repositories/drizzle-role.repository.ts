@@ -71,25 +71,9 @@ export class DrizzleRoleRepository implements RoleRepository {
   }
 
   async findOneByTitle(title: string): Promise<ResponseRoleDto> {
-    return await this.drizzleService.db
-      .select({
-        id: roles.id,
-        title: roles.title,
-        description: roles.description,
-        canCreate: roles.canCreate,
-        canEdit: roles.canEdit,
-        canRead: roles.canRead,
-        canRemove: roles.canRemove,
-        createdAt: roles.createdAt,
-        updatedAt: roles.updatedAt,
-      })
-      .from(roles)
-      .where(eq(roles.title, title))
-      .then((res) => {
-        if (res.length === 0) return null;
-
-        return res[0];
-      });
+    return await this.drizzleService.db.query.roles.findFirst({
+      where: eq(this.drizzleService.schema.roles.title, title),
+    });
   }
 
   async update(

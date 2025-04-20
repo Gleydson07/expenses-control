@@ -1,5 +1,5 @@
 {
-  "id": "9eb4274f-25fc-47d2-add1-4348689b9353",
+  "id": "016b0c1b-0f7f-40d4-bc44-6a0dabb1e6d7",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -68,6 +68,12 @@
         "title": {
           "name": "title",
           "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "owner_user_id": {
+          "name": "owner_user_id",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
@@ -160,7 +166,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "managements_role_id_roles_id_fk": {
@@ -318,15 +324,15 @@
         },
         "month": {
           "name": "month",
-          "type": "timestamp",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "year": {
           "name": "year",
-          "type": "timestamp",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "notes": {
           "name": "notes",
@@ -364,9 +370,24 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "un_reference_months_cost_center_id_month_year": {
+          "name": "un_reference_months_cost_center_id_month_year",
+          "nullsNotDistinct": false,
+          "columns": [
+            "cost_center_id",
+            "month",
+            "year"
+          ]
+        }
+      },
       "policies": {},
-      "checkConstraints": {},
+      "checkConstraints": {
+        "month_range_check": {
+          "name": "month_range_check",
+          "value": "month >= 1 AND month <= 12"
+        }
+      },
       "isRLSEnabled": false
     },
     "public.roles": {
@@ -437,6 +458,16 @@
           "nullsNotDistinct": false,
           "columns": [
             "title"
+          ]
+        },
+        "un_roles_title_ccreate_cedit_cread_cremove": {
+          "name": "un_roles_title_ccreate_cedit_cread_cremove",
+          "nullsNotDistinct": false,
+          "columns": [
+            "can_create",
+            "can_edit",
+            "can_read",
+            "can_remove"
           ]
         }
       },
@@ -542,9 +573,9 @@
       "name": "reference_months_status",
       "schema": "public",
       "values": [
-        "OPEN",
+        "PLANNING",
         "IN_PROGRESS",
-        "COMPLETED",
+        "FINALIZED",
         "CLOSED"
       ]
     },

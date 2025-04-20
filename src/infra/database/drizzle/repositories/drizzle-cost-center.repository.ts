@@ -22,9 +22,9 @@ export class DrizzleCostCenterRepository implements CostCenterRepository {
       .values({
         title,
         description: description,
-        userId,
-        created_at: new Date(),
-        updated_at: new Date(),
+        ownerUserId: userId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       })
       .returning();
 
@@ -48,6 +48,7 @@ export class DrizzleCostCenterRepository implements CostCenterRepository {
         id: costCenters.id,
         title: costCenters.title,
         description: costCenters.description,
+        ownerUserId: costCenters.ownerUserId,
         isActive: costCenters.isActive,
         createdAt: costCenters.createdAt,
         updatedAt: costCenters.updatedAt,
@@ -68,6 +69,7 @@ export class DrizzleCostCenterRepository implements CostCenterRepository {
         id: costCenters.id,
         title: costCenters.title,
         description: costCenters.description,
+        ownerUserId: costCenters.ownerUserId,
         isActive: costCenters.isActive,
         createdAt: costCenters.createdAt,
         updatedAt: costCenters.updatedAt,

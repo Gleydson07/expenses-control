@@ -17,7 +17,11 @@ export class DrizzleManagementRepository implements ManagementRepository {
 
     const management = await this.drizzleService.db
       .insert(managements)
-      .values({ costCenterId, roleId, userId })
+      .values({
+        costCenterId,
+        roleId,
+        userId,
+      })
       .returning();
 
     return management[0];

@@ -11,6 +11,7 @@ const postgres = require('postgres');
 export class DrizzleService implements OnModuleDestroy {
   private client: any;
   public db: PostgresJsDatabase<typeof schema>;
+  public schema = schema;
 
   constructor(private configService: ConfigService) {
     const databaseUrl = this.configService.get<string>('DATABASE_URL');
