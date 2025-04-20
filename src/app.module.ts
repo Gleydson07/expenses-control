@@ -9,6 +9,7 @@ import { AuthGuard } from './infra/auth/guards/auth.guard';
 import { CostCenterModule } from './app/modules/cost_center/cost-center.module';
 import { ManagementModule } from './app/modules/management/management.module';
 import { RoleModule } from './app/modules/role/role.module';
+import { CategoryModule } from './app/modules/category/category.module';
 
 const env = dotenv.config();
 dotenvExpand.expand(env);
@@ -27,6 +28,7 @@ export const prefix = 'ms-expenses-control/api/v1';
     CostCenterModule,
     ManagementModule,
     RoleModule,
+    CategoryModule,
     RouterModule.register([
       {
         path: `${prefix}/cost-centers`,
@@ -35,6 +37,10 @@ export const prefix = 'ms-expenses-control/api/v1';
       {
         path: `${prefix}/roles`,
         module: RoleModule,
+      },
+      {
+        path: `${prefix}/categories`,
+        module: CategoryModule,
       },
     ]),
   ],

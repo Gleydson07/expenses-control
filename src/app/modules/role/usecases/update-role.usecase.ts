@@ -7,12 +7,7 @@ import { ResponseRoleDto } from '../dto/response-role.dto';
 export class UpdateRoleUseCase {
   constructor(private readonly roleRepository: RoleRepository) {}
 
-  async execute(
-    costControlId: number,
-    data: UpdateRoleDto,
-  ): Promise<ResponseRoleDto> {
-    const costCenter = await this.roleRepository.update(costControlId, data);
-
-    return costCenter;
+  async execute(roleId: number, data: UpdateRoleDto): Promise<ResponseRoleDto> {
+    return await this.roleRepository.update(roleId, data);
   }
 }

@@ -5,7 +5,7 @@ import { RoleRepository } from 'src/app/repositories/role.repository';
 export class DeleteRoleUseCase {
   constructor(private readonly roleRepository: RoleRepository) {}
 
-  async execute(roleiD: number): Promise<void> {
-    await this.roleRepository.remove(roleiD);
+  async execute(roleId: number): Promise<void> {
+    await this.roleRepository.remove(roleId);
   }
 }
