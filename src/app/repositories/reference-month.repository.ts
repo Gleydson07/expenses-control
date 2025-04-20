@@ -5,9 +5,9 @@ import { UpdateReferenceMonthDto } from '../modules/reference_month/dto/update-r
 
 @Injectable()
 export abstract class ReferenceMonthRepository {
-  abstract create(
-    createReferenceMonth: CreateReferenceMonthDto,
-  ): Promise<ResponseReferenceMonthDto>;
+  abstract createMany(
+    createReferenceMonth: CreateReferenceMonthDto[],
+  ): Promise<ResponseReferenceMonthDto[]>;
 
   abstract findByCostCenterId(
     costCenterId: number,

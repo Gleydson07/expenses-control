@@ -14,31 +14,27 @@ export class DrizzleReferenceMonthRepository
 {
   constructor(private readonly drizzleService: DrizzleService) {}
 
-  async create(
-    createReferenceMonth: CreateReferenceMonthDto,
-  ): Promise<ResponseReferenceMonthDto> {
+  async createMany(
+    createReferenceMonths: CreateReferenceMonthDto[],
+  ): Promise<ResponseReferenceMonthDto[]> {
     const data = await this.drizzleService.db
       .insert(referenceMonths)
-      .values({
-        ...createReferenceMonth,
-        status: referenceMonthStatusesEnum.PLANNING,
-      })
-      .returning()
-      .then((res) => res[0]);
+      .values(createReferenceMonths)
+      .returning();
 
-    return {
-      id: data.id,
-      costCenterId: data.costCenterId,
-      month: data.month,
-      year: data.year,
-      notes: data.notes,
-      status: data.status as referenceMonthStatusesEnum,
-      expensesTotalValue: Number(data.expensesTotalValue),
-      incomesTotalValue: Number(data.incomesTotalValue),
-      balance: Number(data.balance),
-      createdAt: data.createdAt,
-      updatedAt: data.updatedAt,
-    };
+    return data.map((dt) => ({
+      id: dt.id,
+      costCenterId: dt.costCenterId,
+      month: dt.month,
+      year: dt.year,
+      notes: dt.notes,
+      status: dt.status as referenceMonthStatusesEnum,
+      expensesTotalValue: Number(dt.expensesTotalValue),
+      incomesTotalValue: Number(dt.incomesTotalValue),
+      balance: Number(dt.balance),
+      createdAt: dt.createdAt,
+      updatedAt: dt.updatedAt,
+    }));
   }
 
   async findByCostCenterId(

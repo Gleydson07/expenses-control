@@ -1,0 +1,32 @@
+type MonthByYear = {
+  month: number;
+  year: number;
+};
+
+function generateMonthAndYearByInterval(
+  finalYear: number,
+  startMonth = new Date().getMonth() + 1,
+  startYear = new Date().getFullYear(),
+): MonthByYear[] {
+  const result: MonthByYear[] = [];
+
+  if (finalYear < startYear) {
+    throw new Error('O ano final não pode ser menor que o ano inicial.');
+  }
+
+  const diffYears = finalYear - startYear;
+  if (diffYears > 5) {
+    throw new Error('O intervalo máximo permitido é de 5 anos.');
+  }
+
+  for (let year = startYear; year <= finalYear; year++) {
+    const start = year === startYear ? startMonth : 1;
+    const end = 12;
+
+    for (let month = start; month <= end; month++) {
+      result.push({ month, year });
+    }
+  }
+
+  return result;
+}
