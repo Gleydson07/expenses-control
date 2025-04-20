@@ -11,17 +11,17 @@ import {
   primaryKey,
   unique,
   check,
+  text,
 } from 'drizzle-orm/pg-core';
 
-export const plannedTransactionTypeEnum = pgEnum('planned_transaction_type', [
+export const financialPlanTypeEnum = pgEnum('financial_plan_type', [
   'INCOME',
   'EXPENSE',
 ]);
 
 export const referenceMonthStatusesEnum = pgEnum('reference_months_status', [
   'PLANNING',
-  'IN_PROGRESS',
-  'FINALIZED',
+  'OPENED',
   'CLOSED',
 ]);
 
@@ -40,8 +40,8 @@ export const costCenters = pgTable('cost_centers', {
   ownerUserId: integer('owner_user_id'),
   description: varchar('description', { length: 2048 }),
   isActive: boolean('is_active').default(true),
-  createdAt: timestamp('created_at'),
-  updatedAt: timestamp('updated_at'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
 export const roles = pgTable(
@@ -71,8 +71,8 @@ export const categories = pgTable('categories', {
   id: serial('id').primaryKey(),
   title: varchar('title', { length: 128 }).unique(),
   description: varchar('description', { length: 2048 }),
-  createdAt: timestamp('created_at'),
-  updatedAt: timestamp('updated_at'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
 export const managements = pgTable(
@@ -106,9 +106,9 @@ export const financialPlans = pgTable('financial_plans', {
     .notNull(),
   title: varchar('title', { length: 128 }),
   description: varchar('description', { length: 2048 }),
-  type: plannedTransactionTypeEnum('type').notNull(),
-  createdAt: timestamp('created_at'),
-  updatedAt: timestamp('updated_at'),
+  type: financialPlanTypeEnum('type').notNull(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
 export const referenceMonths = pgTable(
@@ -132,9 +132,9 @@ export const referenceMonths = pgTable(
     ),
     month: integer('month').notNull(),
     year: integer('year').notNull(),
-    notes: varchar('notes'),
-    createdAt: timestamp('created_at'),
-    updatedAt: timestamp('updated_at'),
+    notes: varchar('notes', { length: 8000 }),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    updatedAt: timestamp('updated_at').notNull().defaultNow(),
   },
   (referenceMonths) => [
     check('month_range_check', sql`month >= 1 AND month <= 12`),
@@ -161,6 +161,6 @@ export const transactions = pgTable('transactions', {
   }).default('0'),
   value: decimal('value', { precision: 9, scale: 2 }).default('0'),
   paymentDate: timestamp('payment_date'),
-  createdAt: timestamp('created_at'),
-  updatedAt: timestamp('updated_at'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });

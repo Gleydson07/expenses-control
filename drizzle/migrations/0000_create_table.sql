@@ -1,12 +1,12 @@
-CREATE TYPE "public"."planned_transaction_type" AS ENUM('INCOME', 'EXPENSE');--> statement-breakpoint
-CREATE TYPE "public"."reference_months_status" AS ENUM('PLANNING', 'IN_PROGRESS', 'FINALIZED', 'CLOSED');--> statement-breakpoint
+CREATE TYPE "public"."financial_plan_type" AS ENUM('INCOME', 'EXPENSE');--> statement-breakpoint
+CREATE TYPE "public"."reference_months_status" AS ENUM('PLANNING', 'OPENED', 'CLOSED');--> statement-breakpoint
 CREATE TYPE "public"."transaction_status" AS ENUM('PENDING', 'SCHEDULED', 'PAID', 'PARTIALLY_PAID', 'OVERDUE', 'CANCELLED');--> statement-breakpoint
 CREATE TABLE "categories" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"title" varchar(128),
 	"description" varchar(2048),
-	"created_at" timestamp,
-	"updated_at" timestamp,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "categories_title_unique" UNIQUE("title")
 );
 --> statement-breakpoint
@@ -16,8 +16,8 @@ CREATE TABLE "cost_centers" (
 	"owner_user_id" integer,
 	"description" varchar(2048),
 	"is_active" boolean DEFAULT true,
-	"created_at" timestamp,
-	"updated_at" timestamp,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "cost_centers_title_unique" UNIQUE("title")
 );
 --> statement-breakpoint
@@ -26,9 +26,9 @@ CREATE TABLE "financial_plans" (
 	"category_id" integer NOT NULL,
 	"title" varchar(128),
 	"description" varchar(2048),
-	"type" "planned_transaction_type" NOT NULL,
-	"created_at" timestamp,
-	"updated_at" timestamp
+	"type" "financial_plan_type" NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "managements" (
@@ -49,9 +49,9 @@ CREATE TABLE "reference_months" (
 	"balance" numeric(12, 2) GENERATED ALWAYS AS (incomes_total_value - expenses_total_value) STORED,
 	"month" integer NOT NULL,
 	"year" integer NOT NULL,
-	"notes" varchar,
-	"created_at" timestamp,
-	"updated_at" timestamp,
+	"notes" varchar(8000),
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "un_reference_months_cost_center_id_month_year" UNIQUE("cost_center_id","month","year"),
 	CONSTRAINT "month_range_check" CHECK (month >= 1 AND month <= 12)
 );
@@ -78,8 +78,8 @@ CREATE TABLE "transactions" (
 	"estimated_value" numeric(9, 2) DEFAULT '0',
 	"value" numeric(9, 2) DEFAULT '0',
 	"payment_date" timestamp,
-	"created_at" timestamp,
-	"updated_at" timestamp
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 ALTER TABLE "financial_plans" ADD CONSTRAINT "financial_plans_category_id_categories_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."categories"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint

@@ -1,5 +1,5 @@
 {
-  "id": "12911df2-5c22-4107-8020-a99fb6796e3f",
+  "id": "8def95c0-624c-4881-9c4f-8bfe7898b4b5",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -30,13 +30,15 @@
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "now()"
         },
         "updated_at": {
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -94,13 +96,15 @@
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "now()"
         },
         "updated_at": {
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -149,7 +153,7 @@
         },
         "type": {
           "name": "type",
-          "type": "planned_transaction_type",
+          "type": "financial_plan_type",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
@@ -158,13 +162,15 @@
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "now()"
         },
         "updated_at": {
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -329,7 +335,7 @@
         },
         "notes": {
           "name": "notes",
-          "type": "varchar",
+          "type": "varchar(8000)",
           "primaryKey": false,
           "notNull": false
         },
@@ -337,13 +343,15 @@
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "now()"
         },
         "updated_at": {
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -521,13 +529,15 @@
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "now()"
         },
         "updated_at": {
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -567,8 +577,8 @@
     }
   },
   "enums": {
-    "public.planned_transaction_type": {
-      "name": "planned_transaction_type",
+    "public.financial_plan_type": {
+      "name": "financial_plan_type",
       "schema": "public",
       "values": [
         "INCOME",
@@ -580,8 +590,7 @@
       "schema": "public",
       "values": [
         "PLANNING",
-        "IN_PROGRESS",
-        "FINALIZED",
+        "OPENED",
         "CLOSED"
       ]
     },
