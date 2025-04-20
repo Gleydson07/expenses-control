@@ -33,6 +33,8 @@ async function main() {
       canEdit: true,
       canRead: true,
       canRemove: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     const [adminRole] = await db

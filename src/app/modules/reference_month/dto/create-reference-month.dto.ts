@@ -5,7 +5,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { referenceMonthStatusesEnum } from './reference-month-status.enum';
+import { referenceMonthStatusEnum } from './reference-month-status.enum';
 
 export class CreateReferenceMonthDto {
   @IsNotEmpty()
@@ -21,8 +21,8 @@ export class CreateReferenceMonthDto {
   year: number;
 
   @IsNotEmpty()
-  @IsEnum(referenceMonthStatusesEnum)
-  status: referenceMonthStatusesEnum;
+  @IsEnum(referenceMonthStatusEnum)
+  status: referenceMonthStatusEnum;
 
   @IsOptional()
   @IsString()

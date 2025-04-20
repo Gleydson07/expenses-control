@@ -1,11 +1,11 @@
-import { referenceMonthStatusesEnum } from './reference-month-status.enum';
+import { referenceMonthStatusEnum } from './reference-month-status.enum';
 
 export class ResponseReferenceMonthDto {
   id: number;
   costCenterId: number;
   month: number;
   year: number;
-  status: referenceMonthStatusesEnum;
+  status: referenceMonthStatusEnum;
   expensesTotalValue: number;
   incomesTotalValue: number;
   balance: number;

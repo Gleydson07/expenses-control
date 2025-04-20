@@ -5,8 +5,8 @@ import { ReferenceMonthRepository } from 'src/app/repositories/reference-month.r
 import { CreateReferenceMonthDto } from 'src/app/modules/reference_month/dto/create-reference-month.dto';
 import { ResponseReferenceMonthDto } from 'src/app/modules/reference_month/dto/response-reference-month.dto';
 import { referenceMonths } from 'drizzle/schema.drizzle';
-import { referenceMonthStatusesEnum } from 'src/app/modules/reference_month/dto/reference-month-status.enum';
 import { UpdateReferenceMonthDto } from 'src/app/modules/reference_month/dto/update-reference-month.dto';
+import { referenceMonthStatusEnum } from 'src/app/modules/reference_month/dto/reference-month-status.enum';
 
 @Injectable()
 export class DrizzleReferenceMonthRepository
@@ -35,7 +35,7 @@ export class DrizzleReferenceMonthRepository
       month: dt.month,
       year: dt.year,
       notes: dt.notes,
-      status: dt.status as referenceMonthStatusesEnum,
+      status: dt.status as referenceMonthStatusEnum,
       expensesTotalValue: Number(dt.expensesTotalValue),
       incomesTotalValue: Number(dt.incomesTotalValue),
       balance: Number(dt.balance),
@@ -72,7 +72,7 @@ export class DrizzleReferenceMonthRepository
       month: dt.month,
       year: dt.year,
       notes: dt.notes,
-      status: dt.status as referenceMonthStatusesEnum,
+      status: dt.status as referenceMonthStatusEnum,
       expensesTotalValue: Number(dt.expensesTotalValue),
       incomesTotalValue: Number(dt.incomesTotalValue),
       balance: Number(dt.balance),
@@ -110,7 +110,7 @@ export class DrizzleReferenceMonthRepository
       month: data.month,
       year: data.year,
       notes: data.notes,
-      status: data.status as referenceMonthStatusesEnum,
+      status: data.status as referenceMonthStatusEnum,
       expensesTotalValue: Number(data.expensesTotalValue),
       incomesTotalValue: Number(data.incomesTotalValue),
       balance: Number(data.balance),
@@ -142,7 +142,7 @@ export class DrizzleReferenceMonthRepository
       month: data.month,
       year: data.year,
       notes: data.notes,
-      status: data.status as referenceMonthStatusesEnum,
+      status: data.status as referenceMonthStatusEnum,
       expensesTotalValue: Number(data.expensesTotalValue),
       incomesTotalValue: Number(data.incomesTotalValue),
       balance: Number(data.balance),

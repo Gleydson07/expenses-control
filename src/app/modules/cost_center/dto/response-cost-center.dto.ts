@@ -1,3 +1,6 @@
+import { ResponseManagementDto } from '../../management/dto/response-cost-center.dto';
+import { ResponseReferenceMonthDto } from '../../reference_month/dto/response-reference-month.dto';
+
 export class ResponseCostCenterDto {
   id: number;
   title: string;
@@ -8,11 +11,7 @@ export class ResponseCostCenterDto {
   updatedAt: Date;
 }
 
-export class ResponseCostCenterWithManagementsDto extends ResponseCostCenterDto {
-  managements: {
-    userId: number;
-    roleId: number;
-    createdAt: Date;
-    updatedAt: Date;
-  }[];
+export class ResponseCostCenterWithAggregatesDto extends ResponseCostCenterDto {
+  managements: ResponseManagementDto[];
+  referenceMonths: ResponseReferenceMonthDto[];
 }

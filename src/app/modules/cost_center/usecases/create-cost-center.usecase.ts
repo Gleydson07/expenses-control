@@ -5,9 +5,9 @@ import { ManagementRepository } from 'src/app/repositories/management.repository
 import { RoleRepository } from 'src/app/repositories/role.repository';
 import { ReferenceMonthRepository } from 'src/app/repositories/reference-month.repository';
 import { CreateCostCenterUseCaseDto } from '../dto/create-cost-center.usecase.dto';
-import { referenceMonthStatusesEnum } from '../../reference_month/dto/reference-month-status.enum';
 import { generateMonthAndYearByInterval } from '../utils/generate-month-and-year-by-interval.utils';
 import { DrizzleService } from 'src/infra/database/drizzle/drizzle.service';
+import { referenceMonthStatusEnum } from '../../reference_month/dto/reference-month-status.enum';
 
 @Injectable()
 export class CreateCostCenterUseCase {
@@ -64,7 +64,7 @@ export class CreateCostCenterUseCase {
           costCenterId: costCenter.id,
           month: item.month,
           year: item.year,
-          status: referenceMonthStatusesEnum.PLANNING,
+          status: referenceMonthStatusEnum.PLANNING,
         }));
 
         this.logger.log(`Creating reference months...`);

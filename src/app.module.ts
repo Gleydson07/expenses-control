@@ -48,6 +48,10 @@ export const prefix = 'ms-expenses-control/api/v1';
         path: `${prefix}/categories`,
         module: CategoryModule,
       },
+      {
+        path: `${prefix}/reference-months`,
+        module: ReferenceMonthModule,
+      },
     ]),
   ],
   controllers: [],
