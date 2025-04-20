@@ -116,9 +116,7 @@ export class DrizzleReferenceMonthRepository
   ): Promise<ResponseReferenceMonthDto> {
     const refMonth = await this.drizzleService.db
       .update(referenceMonths)
-      .set({
-        ...updateReferenceMonth,
-      })
+      .set(updateReferenceMonth)
       .where(eq(referenceMonths.id, referenceMonthId))
       .returning();
 

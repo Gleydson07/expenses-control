@@ -14,16 +14,9 @@ export class DrizzleCategoryRepository implements CategoryRepository {
   async create(
     createCategory: CreateCategoryDto,
   ): Promise<ResponseCategoryDto> {
-    const { title, description } = createCategory;
-
     const category = await this.drizzleService.db
       .insert(categories)
-      .values({
-        title,
-        description: description,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      })
+      .values(createCategory)
       .returning();
 
     return category[0];
@@ -67,11 +60,7 @@ export class DrizzleCategoryRepository implements CategoryRepository {
 
     return this.drizzleService.db
       .update(categories)
-      .set({
-        title,
-        description,
-        updatedAt: new Date(),
-      })
+      .set(updateCategory)
       .where(eq(categories.id, categoryId))
       .returning()
       .then((res) => res[0]);

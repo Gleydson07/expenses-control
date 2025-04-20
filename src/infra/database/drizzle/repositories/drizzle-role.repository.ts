@@ -12,21 +12,9 @@ export class DrizzleRoleRepository implements RoleRepository {
   constructor(private readonly drizzleService: DrizzleService) {}
 
   async create(createRole: CreateRoleDto): Promise<ResponseRoleDto> {
-    const { title, description, canCreate, canEdit, canRead, canRemove } =
-      createRole;
-
     const role = await this.drizzleService.db
       .insert(roles)
-      .values({
-        title,
-        description: description,
-        canCreate,
-        canEdit,
-        canRead,
-        canRemove,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      })
+      .values(createRole)
       .returning();
 
     return role[0];
@@ -80,20 +68,9 @@ export class DrizzleRoleRepository implements RoleRepository {
     roleId: number,
     updateRole: UpdateRoleDto,
   ): Promise<ResponseRoleDto> {
-    const { title, description, canCreate, canEdit, canRead, canRemove } =
-      updateRole;
-
     return this.drizzleService.db
       .update(roles)
-      .set({
-        title,
-        description,
-        canCreate,
-        canEdit,
-        canRead,
-        canRemove,
-        updatedAt: new Date(),
-      })
+      .set(updateRole)
       .where(eq(roles.id, roleId))
       .returning()
       .then((res) => res[0]);
@@ -101,7 +78,5 @@ export class DrizzleRoleRepository implements RoleRepository {
 
   async remove(roleId: number): Promise<void> {
     await this.drizzleService.db.delete(roles).where(eq(roles.id, roleId));
-
-    return;
   }
 }

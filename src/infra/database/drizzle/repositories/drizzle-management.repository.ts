@@ -13,15 +13,9 @@ export class DrizzleManagementRepository implements ManagementRepository {
   async create(
     createManagement: CreateManagementDto,
   ): Promise<ResponseManagementDto> {
-    const { costCenterId, roleId, userId } = createManagement;
-
     const management = await this.drizzleService.db
       .insert(managements)
-      .values({
-        costCenterId,
-        roleId,
-        userId,
-      })
+      .values(createManagement)
       .returning();
 
     return management[0];
@@ -30,7 +24,7 @@ export class DrizzleManagementRepository implements ManagementRepository {
   async findByCostCenterId(
     costCenterId: number,
   ): Promise<ResponseManagementDto[]> {
-    return await this.drizzleService.db
+    const manags = await this.drizzleService.db
       .select({
         costCenterId: managements.costCenterId,
         userId: managements.userId,
@@ -41,10 +35,18 @@ export class DrizzleManagementRepository implements ManagementRepository {
       .from(managements)
       .where(eq(managements.costCenterId, costCenterId))
       .execute();
+
+    return manags.map((management) => ({
+      costCenterId: management.costCenterId,
+      userId: management.userId,
+      roleId: management.roleId,
+      createdAt: management.createdAt,
+      updatedAt: management.updatedAt,
+    }));
   }
 
   async findByUserId(userId: number): Promise<ResponseManagementDto[]> {
-    return await this.drizzleService.db
+    const manags = await this.drizzleService.db
       .select({
         costCenterId: managements.costCenterId,
         userId: managements.userId,
@@ -55,22 +57,30 @@ export class DrizzleManagementRepository implements ManagementRepository {
       .from(managements)
       .where(eq(managements.userId, userId))
       .execute();
+
+    return manags.map((management) => ({
+      costCenterId: management.costCenterId,
+      userId: management.userId,
+      roleId: management.roleId,
+      createdAt: management.createdAt,
+      updatedAt: management.updatedAt,
+    }));
   }
 
   async delete(
     costCenterId: number,
     userId: number,
-    roleId?: number,
+    roleId: number,
   ): Promise<void> {
-    const conditions = and(
-      eq(managements.costCenterId, costCenterId),
-      eq(managements.userId, userId),
-      roleId ? eq(managements.roleId, roleId) : undefined,
-    );
-
     await this.drizzleService.db
       .delete(managements)
-      .where(conditions)
+      .where(
+        and(
+          eq(managements.costCenterId, costCenterId),
+          eq(managements.userId, userId),
+          eq(managements.roleId, roleId),
+        ),
+      )
       .execute();
   }
 }

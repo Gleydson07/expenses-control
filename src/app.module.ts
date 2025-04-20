@@ -11,6 +11,7 @@ import { ManagementModule } from './app/modules/management/management.module';
 import { RoleModule } from './app/modules/role/role.module';
 import { CategoryModule } from './app/modules/category/category.module';
 import { ReferenceMonthModule } from './app/modules/reference_month/reference_month.module';
+import { FinancialPlanModule } from './app/modules/financial_plan/financial_plan.module';
 
 const env = dotenv.config();
 dotenvExpand.expand(env);
@@ -31,6 +32,7 @@ export const prefix = 'ms-expenses-control/api/v1';
     RoleModule,
     CategoryModule,
     ReferenceMonthModule,
+    FinancialPlanModule,
     RouterModule.register([
       {
         path: `${prefix}/cost-centers`,
@@ -47,6 +49,10 @@ export const prefix = 'ms-expenses-control/api/v1';
       {
         path: `${prefix}/reference-months`,
         module: ReferenceMonthModule,
+      },
+      {
+        path: `${prefix}/financial-plans`,
+        module: FinancialPlanModule,
       },
     ]),
   ],

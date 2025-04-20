@@ -15,16 +15,11 @@ export class DrizzleCostCenterRepository implements CostCenterRepository {
     userId: number,
     createCostCenter: CreateCostCenterDto,
   ): Promise<ResponseCostCenterDto> {
-    const { title, description } = createCostCenter;
-
     const costCenter = await this.drizzleService.db
       .insert(costCenters)
       .values({
-        title,
-        description: description,
+        ...createCostCenter,
         ownerUserId: userId,
-        createdAt: new Date(),
-        updatedAt: new Date(),
       })
       .returning();
 
@@ -90,15 +85,9 @@ export class DrizzleCostCenterRepository implements CostCenterRepository {
     centerCostId: number,
     updateCostCenter: UpdateCostCenterDto,
   ): Promise<ResponseCostCenterDto> {
-    const { title, description } = updateCostCenter;
-
     return this.drizzleService.db
       .update(costCenters)
-      .set({
-        title,
-        description,
-        updatedAt: new Date(),
-      })
+      .set(updateCostCenter)
       .where(eq(costCenters.id, centerCostId))
       .returning()
       .then((res) => res[0]);

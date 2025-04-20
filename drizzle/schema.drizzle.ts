@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm';
+import { isNotNull, sql } from 'drizzle-orm';
 import {
   pgTable,
   serial,
@@ -11,7 +11,6 @@ import {
   primaryKey,
   unique,
   check,
-  text,
 } from 'drizzle-orm/pg-core';
 
 export const financialPlanTypeEnum = pgEnum('financial_plan_type', [
@@ -34,28 +33,38 @@ export const transactionStatusEnum = pgEnum('transaction_status', [
   'CANCELLED',
 ]);
 
-export const costCenters = pgTable('cost_centers', {
-  id: serial('id').primaryKey(),
-  title: varchar('title', { length: 128 }).unique(),
-  ownerUserId: integer('owner_user_id'),
-  description: varchar('description', { length: 2048 }),
-  isActive: boolean('is_active').default(true),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
-});
+export const costCenters = pgTable(
+  'cost_centers',
+  {
+    id: serial('id').primaryKey(),
+    title: varchar('title', { length: 128 }).notNull(),
+    ownerUserId: integer('owner_user_id').notNull(),
+    description: varchar('description', { length: 2048 }),
+    isActive: boolean('is_active').default(true),
+    createdAt: timestamp('created_at').defaultNow(),
+    updatedAt: timestamp('updated_at').defaultNow(),
+  },
+  (costCenter) => [
+    unique('un_cost_centers_title_owner_user_id').on(
+      costCenter.title,
+      costCenter.ownerUserId,
+    ),
+  ],
+);
 
 export const roles = pgTable(
   'roles',
   {
     id: serial('id').primaryKey(),
-    title: varchar('title', { length: 128 }).unique(),
+    title: varchar('title', { length: 128 }).notNull().unique(),
     description: varchar('description', { length: 2048 }),
-    canCreate: boolean('can_create'),
-    canEdit: boolean('can_edit'),
-    canRead: boolean('can_read'),
-    canRemove: boolean('can_remove'),
-    createdAt: timestamp('created_at'),
-    updatedAt: timestamp('updated_at'),
+    canCreate: boolean('can_create').default(false),
+    canEdit: boolean('can_edit').default(false),
+    canRead: boolean('can_read').default(false),
+    canRemove: boolean('can_remove').default(false),
+    isActive: boolean('is_active').default(true),
+    createdAt: timestamp('created_at').defaultNow(),
+    updatedAt: timestamp('updated_at').defaultNow(),
   },
   (role) => [
     unique('un_roles_title_ccreate_cedit_cread_cremove').on(
@@ -69,10 +78,10 @@ export const roles = pgTable(
 
 export const categories = pgTable('categories', {
   id: serial('id').primaryKey(),
-  title: varchar('title', { length: 128 }).unique(),
+  title: varchar('title', { length: 128 }).notNull().unique(),
   description: varchar('description', { length: 2048 }),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
 });
 
 export const managements = pgTable(
@@ -99,24 +108,12 @@ export const managements = pgTable(
   ],
 );
 
-export const financialPlans = pgTable('financial_plans', {
-  id: serial('id').primaryKey(),
-  categoryId: integer('category_id')
-    .references(() => categories.id)
-    .notNull(),
-  title: varchar('title', { length: 128 }),
-  description: varchar('description', { length: 2048 }),
-  type: financialPlanTypeEnum('type').notNull(),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
-});
-
 export const referenceMonths = pgTable(
   'reference_months',
   {
     id: serial('id').primaryKey(),
     costCenterId: integer('cost_center_id')
-      .references(() => costCenters.id)
+      .references(() => costCenters.id, { onDelete: 'cascade' })
       .notNull(),
     status: referenceMonthStatusesEnum('status').notNull(),
     expensesTotalValue: decimal('expenses_total_value', {
@@ -133,8 +130,8 @@ export const referenceMonths = pgTable(
     month: integer('month').notNull(),
     year: integer('year').notNull(),
     notes: varchar('notes', { length: 8000 }),
-    createdAt: timestamp('created_at').notNull().defaultNow(),
-    updatedAt: timestamp('updated_at').notNull().defaultNow(),
+    createdAt: timestamp('created_at').defaultNow(),
+    updatedAt: timestamp('updated_at').defaultNow(),
   },
   (referenceMonths) => [
     check('month_range_check', sql`month >= 1 AND month <= 12`),
@@ -146,13 +143,25 @@ export const referenceMonths = pgTable(
   ],
 );
 
+export const financialPlans = pgTable('financial_plans', {
+  id: serial('id').primaryKey(),
+  categoryId: integer('category_id')
+    .references(() => categories.id, { onDelete: 'restrict' })
+    .notNull(),
+  title: varchar('title', { length: 128 }).notNull().unique(),
+  description: varchar('description', { length: 2048 }),
+  type: financialPlanTypeEnum('type').notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
+
 export const transactions = pgTable('transactions', {
   id: serial('id').primaryKey(),
   referenceMonthId: integer('reference_month_id')
-    .references(() => referenceMonths.id)
+    .references(() => referenceMonths.id, { onDelete: 'cascade' })
     .notNull(),
   financialPlanId: integer('financial_plan_id')
-    .references(() => financialPlans.id)
+    .references(() => financialPlans.id, { onDelete: 'cascade' })
     .notNull(),
   status: transactionStatusEnum('status').notNull(),
   estimatedValue: decimal('estimated_value', {
@@ -161,6 +170,6 @@ export const transactions = pgTable('transactions', {
   }).default('0'),
   value: decimal('value', { precision: 9, scale: 2 }).default('0'),
   paymentDate: timestamp('payment_date'),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
 });

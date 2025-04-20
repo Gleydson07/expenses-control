@@ -1,9 +1,15 @@
 import { Module } from '@nestjs/common';
-import { ReferenceMonthService } from './reference_month.service';
 import { ReferenceMonthController } from './reference_month.controller';
+import { ReferenceMonthRepository } from 'src/app/repositories/reference-month.repository';
+import { DrizzleReferenceMonthRepository } from 'src/infra/database/drizzle/repositories/drizzle-reference-month.repository';
 
 @Module({
   controllers: [ReferenceMonthController],
-  providers: [ReferenceMonthService],
+  providers: [
+    {
+      provide: ReferenceMonthRepository,
+      useClass: DrizzleReferenceMonthRepository,
+    },
+  ],
 })
 export class ReferenceMonthModule {}
