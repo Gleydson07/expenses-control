@@ -12,34 +12,33 @@ import { UpdateTransactionDto } from 'src/app/modules/transaction/dto/update-tra
 export class DrizzleTransactionRepository implements TransactionRepository {
   constructor(private readonly drizzleService: DrizzleService) {}
 
-  async create(
-    createTransaction: CreateTransactionDto,
+  async createMany(
+    createTransactions: CreateTransactionDto[],
     tx?: Transaction,
-  ): Promise<ResponseTransactionDto> {
-    const params = {
-      ...createTransaction,
+  ): Promise<ResponseTransactionDto[]> {
+    const params = createTransactions.map((item) => ({
+      ...item,
       status: transactionStatusEnum.PLANNING,
       createdAt: new Date(),
       updatedAt: new Date(),
-    };
+    }));
 
     const data = await (tx ? tx : this.drizzleService.db)
       .insert(transactions)
       .values(params)
-      .returning()
-      .then((res) => res[0]);
+      .returning();
 
-    return {
-      id: data.id,
-      referenceMonthId: data.referenceMonthId,
-      financialPlanId: data.financialPlanId,
-      status: data.status as transactionStatusEnum,
-      estimatedValue: Number(data.estimatedValue),
-      value: Number(data.value),
-      paymentDate: data.paymentDate,
-      createdAt: data.createdAt,
-      updatedAt: data.updatedAt,
-    };
+    return data.map((dt) => ({
+      id: dt.id,
+      referenceMonthId: dt.referenceMonthId,
+      financialPlanId: dt.financialPlanId,
+      status: dt.status as transactionStatusEnum,
+      estimatedValue: Number(dt.estimatedValue),
+      value: Number(dt.value),
+      paymentDate: dt.paymentDate,
+      createdAt: dt.createdAt,
+      updatedAt: dt.updatedAt,
+    }));
   }
 
   async findAll(tx?: Transaction): Promise<ResponseTransactionDto[]> {

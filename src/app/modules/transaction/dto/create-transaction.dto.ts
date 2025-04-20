@@ -14,15 +14,15 @@ export class CreateTransactionDto {
   @IsNumber()
   financialPlanId: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
-  estimatedValue: number;
+  estimatedValue?: number;
 
   @IsOptional()
   @IsNumber()
-  value: number;
+  value?: number;
 
   @IsOptional()
   @IsDateString()
-  paymentDate: string;
+  paymentDate?: string;
 }

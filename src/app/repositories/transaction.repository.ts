@@ -6,10 +6,10 @@ import { DatabaseSession } from 'src/core/database/database-session.interface';
 
 @Injectable()
 export abstract class TransactionRepository {
-  abstract create(
-    createTransaction: CreateTransactionDto,
+  abstract createMany(
+    createTransactions: CreateTransactionDto[],
     session?: DatabaseSession,
-  ): Promise<ResponseTransactionDto>;
+  ): Promise<ResponseTransactionDto[]>;
 
   abstract findAll(
     session?: DatabaseSession,

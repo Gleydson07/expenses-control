@@ -6,15 +6,15 @@ import { RoleRepository } from 'src/app/repositories/role.repository';
 import { ReferenceMonthRepository } from 'src/app/repositories/reference-month.repository';
 import { CreateCostCenterUseCaseDto } from '../dto/create-cost-center.usecase.dto';
 import { generateMonthAndYearByInterval } from '../utils/generate-month-and-year-by-interval.utils';
-import { DrizzleService } from 'src/infra/database/drizzle/drizzle.service';
 import { referenceMonthStatusEnum } from '../../reference_month/dto/reference-month-status.enum';
+import { TransactionManager } from 'src/core/database/abstract-transaction-manager.manager';
 
 @Injectable()
 export class CreateCostCenterUseCase {
   private readonly logger = new Logger(CreateCostCenterUseCase.name);
 
   constructor(
-    private readonly drizzleService: DrizzleService,
+    private readonly transaction: TransactionManager,
     private readonly costCenterRepository: CostCenterRepository,
     private readonly managementRepository: ManagementRepository,
     private readonly roleRepository: RoleRepository,
@@ -26,7 +26,7 @@ export class CreateCostCenterUseCase {
     data: CreateCostCenterUseCaseDto,
   ): Promise<ResponseCostCenterDto> {
     try {
-      return await this.drizzleService.db.transaction(async (tx) => {
+      return await this.transaction.runInTransaction(async (tx) => {
         this.logger.log(
           `Creating cost center ${data.title} for user ${userId}...`,
         );
